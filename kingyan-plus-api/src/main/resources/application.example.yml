@@ -1,11 +1,16 @@
 debug: false
 spring:
+  # 国际化配置
+  messages:
+    basename: i18n/message
+  # 数据库
   datasource:
     username: root
     password:
     url: jdbc:mysql://localhost:3306/kingyan_plus?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+# 鉴权组件：https://sa-token.dev33.cn/doc/index.html#/use/config
 sa-token:
   token-name: kysession
   token-style: simple-uuid
