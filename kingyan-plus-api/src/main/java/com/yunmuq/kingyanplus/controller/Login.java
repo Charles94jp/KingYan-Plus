@@ -3,9 +3,11 @@ package com.yunmuq.kingyanplus.controller;
 import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.stp.SaLoginModel;
 import cn.dev33.satoken.stp.StpUtil;
+import com.yunmuq.kingyanplus.config.LoginConfigEntity;
 import com.yunmuq.kingyanplus.dto.User;
 import com.yunmuq.kingyanplus.mapper.UserMapper;
 import com.yunmuq.kingyanplus.model.Requests.LoginRequest;
+import com.yunmuq.kingyanplus.model.Responses.LoginConfigResponse;
 import com.yunmuq.kingyanplus.model.Responses.LoginResponse;
 import com.yunmuq.kingyanplus.service.security.UserPassword;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,15 +25,26 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class Login {
+
+    @Autowired
+    LoginConfigEntity loginConfigEntity;
+
     @Autowired
     UserMapper userMapper;
 
     @Autowired
     UserPassword userPassword;
 
+    @GetMapping("/getLoginConfig")
+    public LoginConfigResponse getLoginConfig() {
+        LoginConfigResponse loginConfigResponse = new LoginConfigResponse(loginConfigEntity.getPublicKeyHex());
+        return loginConfigResponse;
+    }
+
     /**
      * 未勾选记住我则session不会添加时间属性，浏览器默认在下次启动后清空cookie。<b>后端仍保存此cookie</b>
      * 勾选后，Set-Cookie时添加过期时间，关闭浏览器不会丢失cookie
+     * todo: 验证码、图片base64
      */
     @PostMapping("/login")
     public LoginResponse login(@RequestBody LoginRequest loginMsg) {
@@ -44,9 +57,9 @@ public class Login {
         }
         // 先登出再登录，刷新会话
         StpUtil.logout();
-        // id参数必须是用户名
+        // id参数必须是用户名，后续使用这个查数据库获取用户角色
         StpUtil.login(loginMsg.getUserName(), new SaLoginModel()
-                .setIsLastingCookie(loginMsg.isRememberMe())        // 是否为持久Cookie（临时Cookie在浏览器关闭时会自动删除，持久Cookie在重新打开后依然存在）
+                .setIsLastingCookie(loginMsg.isRememberMe())   // 是否为持久Cookie（临时Cookie在浏览器关闭时会自动删除，持久Cookie在重新打开后依然存在）
         );
         // 密码不要给前端
         user.setPassword(null);

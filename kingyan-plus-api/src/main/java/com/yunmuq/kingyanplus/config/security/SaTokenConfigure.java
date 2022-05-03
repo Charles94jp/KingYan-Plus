@@ -6,9 +6,6 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * 无@EnableWebMvc不生效
- * todo: 注意EnableWebMvc对其他WebMvcConfigurer是否有负面影响
- *
  * @author yunmuq
  * @version v1.0.0
  * @since 2022-05-03
@@ -21,6 +18,7 @@ public class SaTokenConfigure implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // 注册注解拦截器，并排除不需要注解鉴权的接口地址 (与登录拦截器无关)
-        registry.addInterceptor(new SaAnnotationInterceptor()).addPathPatterns("/**").excludePathPatterns("/login");
+        registry.addInterceptor(new SaAnnotationInterceptor()).addPathPatterns("/**")
+                .excludePathPatterns("/login", "getLoginConfig");
     }
 }
