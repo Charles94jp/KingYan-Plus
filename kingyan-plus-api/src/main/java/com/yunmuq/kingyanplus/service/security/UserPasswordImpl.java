@@ -43,18 +43,11 @@ public class UserPasswordImpl implements UserPassword {
      * @param PwdEncryptedBySM2 前端传来的密文，sm-crypto库加密后的hex str to Uint8Array to base64
      * @return 明文，二进制
      * @throws InvalidCipherTextException 密码格式错误
-     * @throws DecoderException           密码非Hex String格式
+     * @throws DecoderException           密码格式错误
      */
     @Override
-    public byte[] decryptSM2(String PwdEncryptedBySM2){
-        try {
-            return SMCrypto.SM2.doDecryptBase64(PwdEncryptedBySM2, loginConfigEntity.getPrivateKeyParameters());
-        } catch (InvalidCipherTextException e) {
-            logger.info("SM2Util.decrypt error，用户提交的密码格式错误，服务器可能受到攻击{}", LogUtil.LogCurrentFileAndLine());
-        } catch (DecoderException e) {
-            logger.info("SM2Util.decrypt error，用户提交的密码非HexStr，服务器可能受到攻击{}", LogUtil.LogCurrentFileAndLine());
-        }
-        return null;
+    public byte[] decryptSM2(String PwdEncryptedBySM2) throws InvalidCipherTextException {
+        return SMCrypto.SM2.doDecryptBase64(PwdEncryptedBySM2, loginConfigEntity.getPrivateKeyParameters());
     }
 
     /**
@@ -63,10 +56,11 @@ public class UserPasswordImpl implements UserPassword {
      * @param PwdHashedBySM3    数据库中SM3加密过的密码
      * @param PwdEncryptedBySM2 前端传来的密文
      * @return
-     * @throws Exception
+     * @throws InvalidCipherTextException 密码格式错误
+     * @throws DecoderException           密码格式错误
      */
     @Override
-    public boolean matchUserPassword(String PwdHashedBySM3, String PwdEncryptedBySM2) {
+    public boolean matchUserPassword(String PwdHashedBySM3, String PwdEncryptedBySM2) throws InvalidCipherTextException {
         byte[] plainPwd = decryptSM2(PwdEncryptedBySM2);
         byte[] encodedPasswordSM3Hash = Base64.decode(PwdHashedBySM3);
         if (encodedPasswordSM3Hash.length != saltLength * 2) {

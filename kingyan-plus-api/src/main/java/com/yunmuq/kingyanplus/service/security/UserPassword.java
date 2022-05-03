@@ -1,5 +1,7 @@
 package com.yunmuq.kingyanplus.service.security;
 
+import org.bouncycastle.crypto.InvalidCipherTextException;
+
 /**
  * 包含了KingYan-plus的密码加密解密逻辑，数据库中密码格式
  *
@@ -16,7 +18,7 @@ public interface UserPassword {
      * @param PwdEncryptedBySM2 前端传来的密文
      * @return 明文，二进制
      */
-    public byte[] decryptSM2(String PwdEncryptedBySM2);
+    public byte[] decryptSM2(String PwdEncryptedBySM2) throws InvalidCipherTextException;
 
     /**
      * 对比数据库中的密码和用户传的密码是否一致
@@ -25,7 +27,7 @@ public interface UserPassword {
      * @param PwdEncryptedBySM2 前端传来的密文
      * @return
      */
-    public boolean matchUserPassword(String PwdHashedBySM3,String PwdEncryptedBySM2);
+    public boolean matchUserPassword(String PwdHashedBySM3,String PwdEncryptedBySM2) throws RuntimeException, InvalidCipherTextException;
 
     /**
      * 将明文进行sm3加密，存储到数据库

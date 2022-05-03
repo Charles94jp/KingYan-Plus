@@ -29,7 +29,7 @@ public class customErrorController implements ErrorController {
     @Autowired
     private MessageSource messageSource;
 
-    private final static Logger logger = LoggerFactory.getLogger(customErrorController.class);
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * 代替默认的错误接口，但以下情况的异常无法被捕获：

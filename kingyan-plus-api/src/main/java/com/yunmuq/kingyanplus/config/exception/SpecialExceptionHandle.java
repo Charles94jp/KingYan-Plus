@@ -36,7 +36,7 @@ public class SpecialExceptionHandle {
     @Autowired
     private MessageSource messageSource;
 
-    private final static Logger logger = LoggerFactory.getLogger(SpecialExceptionHandle.class);
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * fastjson反序列化错误

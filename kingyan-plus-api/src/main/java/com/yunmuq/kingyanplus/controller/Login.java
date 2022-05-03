@@ -10,6 +10,9 @@ import com.yunmuq.kingyanplus.model.request.LoginRequest;
 import com.yunmuq.kingyanplus.model.response.LoginConfigResponse;
 import com.yunmuq.kingyanplus.model.response.LoginResponse;
 import com.yunmuq.kingyanplus.service.security.UserPassword;
+import com.yunmuq.kingyanplus.util.LogUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -42,6 +45,8 @@ public class Login {
     @Autowired
     private MessageSource messageSource;
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @GetMapping("/getLoginConfig")
     public LoginConfigResponse getLoginConfig() {
         LoginConfigResponse loginConfigResponse = new LoginConfigResponse(loginConfigEntity.getPublicKeyHex());
@@ -55,13 +60,26 @@ public class Login {
      */
     @PostMapping("/login")
     public LoginResponse login(@RequestBody LoginRequest loginMsg) {
-        User user = userMapper.selectUserByUserName(loginMsg.getUserName());
         Locale locale = LocaleContextHolder.getLocale();
         String tips = messageSource.getMessage("login.fail", null, locale);
+        String userName = loginMsg.getUserName();
+        String userPwd = loginMsg.getPassword();
+        if (userName == null || userName.equals("") || userPwd == null || userPwd.equals("")) {
+            return new LoginResponse(false, tips, null);
+        }
+        User user = userMapper.selectUserByUserName(userName);
         if (user == null) {
             return new LoginResponse(false, tips, null);
         }
-        if (!userPassword.matchUserPassword(user.getPassword(), loginMsg.getPassword())) {
+        boolean matchPwd = false;
+        try {
+            matchPwd = userPassword.matchUserPassword(user.getPassword(), userPwd);
+        } catch (Exception e) {
+            tips = messageSource.getMessage("login.invalid-pwd", null, locale);
+            logger.info("login输入非法密码，服务器可能遭受攻击", e);
+            return new LoginResponse(false, tips, null);
+        }
+        if (!matchPwd) {
             return new LoginResponse(false, tips, null);
         }
         // 先登出再登录，刷新会话
@@ -86,7 +104,7 @@ public class Login {
 
     @GetMapping("/hello")
     @SaCheckRole("admin")
-    public String hello(){
+    public String hello() {
         return "hello";
     }
 }
