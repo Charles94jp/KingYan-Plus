@@ -1,6 +1,5 @@
-package com.yunmuq.kingyanplus.model.Responses;
+package com.yunmuq.kingyanplus.model.request;
 
-import com.yunmuq.kingyanplus.dto.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,8 +14,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginResponse {
-    private boolean success;
-    private String msg;
-    private User user;
+public class LoginRequest {
+    private String userName;
+    private String password;
+    private boolean rememberMe;
+    //private String captcha;
 }

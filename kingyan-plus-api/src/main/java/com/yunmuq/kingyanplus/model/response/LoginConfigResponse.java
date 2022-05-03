@@ -1,4 +1,4 @@
-package com.yunmuq.kingyanplus.model.Responses;
+package com.yunmuq.kingyanplus.model.response;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
