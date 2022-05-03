@@ -11,10 +11,14 @@ import com.yunmuq.kingyanplus.model.Responses.LoginConfigResponse;
 import com.yunmuq.kingyanplus.model.Responses.LoginResponse;
 import com.yunmuq.kingyanplus.service.security.UserPassword;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Locale;
 
 /**
  * @author yunmuq
@@ -35,6 +39,9 @@ public class Login {
     @Autowired
     UserPassword userPassword;
 
+    @Autowired
+    private MessageSource messageSource;
+
     @GetMapping("/getLoginConfig")
     public LoginConfigResponse getLoginConfig() {
         LoginConfigResponse loginConfigResponse = new LoginConfigResponse(loginConfigEntity.getPublicKeyHex());
@@ -49,11 +56,13 @@ public class Login {
     @PostMapping("/login")
     public LoginResponse login(@RequestBody LoginRequest loginMsg) {
         User user = userMapper.selectUserByUserName(loginMsg.getUserName());
+        Locale locale = LocaleContextHolder.getLocale();
+        String tips = messageSource.getMessage("login.fail", null, locale);
         if (user == null) {
-            return new LoginResponse(false, "用户名或密码错误", null);
+            return new LoginResponse(false, tips, null);
         }
         if (!userPassword.matchUserPassword(user.getPassword(), loginMsg.getPassword())) {
-            return new LoginResponse(false, "用户名或密码错误", null);
+            return new LoginResponse(false, tips, null);
         }
         // 先登出再登录，刷新会话
         StpUtil.logout();
@@ -63,13 +72,16 @@ public class Login {
         );
         // 密码不要给前端
         user.setPassword(null);
-        return new LoginResponse(StpUtil.isLogin(), "登录成功", user);
+        tips = messageSource.getMessage("login.success", null, locale);
+        return new LoginResponse(StpUtil.isLogin(), tips, user);
     }
 
     @GetMapping("/logout")
     public LoginResponse logout() {
         StpUtil.logout();
-        return new LoginResponse(!StpUtil.isLogin(), "登出成功", null);
+        Locale locale = LocaleContextHolder.getLocale();
+        String tips = messageSource.getMessage("logout.fail", null, locale);
+        return new LoginResponse(!StpUtil.isLogin(), tips, null);
     }
 
     @GetMapping("/hello")
