@@ -1,6 +1,6 @@
 package com.yunmuq.kingyanplus.util.gmhelper.cert;
 
-import com.yunmuq.kingyan.util.gmhelper.cert.exception.InvalidX500NameException;
+import com.yunmuq.kingyanplus.util.gmhelper.cert.exception.InvalidX500NameException;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;

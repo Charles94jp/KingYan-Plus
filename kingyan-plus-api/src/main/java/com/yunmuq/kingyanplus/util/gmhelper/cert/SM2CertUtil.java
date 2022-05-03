@@ -1,7 +1,7 @@
 package com.yunmuq.kingyanplus.util.gmhelper.cert;
 
-import com.yunmuq.kingyan.util.gmhelper.BCECUtil;
-import com.yunmuq.kingyan.util.gmhelper.SM2Util;
+import com.yunmuq.kingyanplus.util.gmhelper.BCECUtil;
+import com.yunmuq.kingyanplus.util.gmhelper.SM2Util;
 import org.bouncycastle.asn1.pkcs.ContentInfo;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;

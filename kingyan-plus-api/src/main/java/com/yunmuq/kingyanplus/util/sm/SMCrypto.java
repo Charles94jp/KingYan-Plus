@@ -1,12 +1,13 @@
 package com.yunmuq.kingyanplus.util.sm;
 
-import com.yunmuq.kingyan.util.gmhelper.BCECUtil;
-import com.yunmuq.kingyan.util.gmhelper.SM2Util;
-import com.yunmuq.kingyan.util.gmhelper.SM3Util;
+import com.yunmuq.kingyanplus.util.gmhelper.BCECUtil;
+import com.yunmuq.kingyanplus.util.gmhelper.SM2Util;
+import com.yunmuq.kingyanplus.util.gmhelper.SM3Util;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
 import org.bouncycastle.crypto.params.ECPublicKeyParameters;
+import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
 
 import java.math.BigInteger;
@@ -17,7 +18,7 @@ import java.nio.charset.StandardCharsets;
  * 此类将Java国密组件gmhelper和前端国密组件sm-crypto适配，主要是sm-crypto不合规范，否则gmhelper可直接使用，无需再封装
  * 实际情景中，后端只需使用到 SM2私钥解密以及 SM3 算法
  * sm2公私钥可从部署时的配置文件读取，HexString，私钥可提前转为ECPrivateKeyParameters存储，公钥返回前端
- * <p>
+ *
  * package gmhelper is shaded from<a href="https://github.com/ZZMarquis/gmhelper">gmhelper</a>
  * gmhelper使用方法参见其单元测试，它依赖bouncycastle的bcprov、bcpkix两个库
  * 前端国密使用<a href="https://www.npmjs.com/package/sm-crypto">sm-crypto</a>，它有js引擎实现的Java版
@@ -82,16 +83,31 @@ public class SMCrypto {
         }
 
         /**
-         * 生产中使用这个
+         * 适配前端sm-crypto库加密结果中缺失第一个字节0x04的情况
+         */
+        public static byte[] adapt(byte[] cipher){
+            byte[] realCipher = new byte[cipher.length + 1];
+            realCipher[0] = 0x04;
+            System.arraycopy(cipher, 0, realCipher, 1, cipher.length);
+            return realCipher;
+        }
+
+        /**
+         * 生产中使用这个，前端sm-crypto库默认结果是hex string
          */
         public static byte[] doDecrypt(String encryptDataHex, ECPrivateKeyParameters privateKey) throws InvalidCipherTextException {
             byte[] cipher = Hex.decode(encryptDataHex);
-            byte[] realCipher = cipher;
-            if (cipher[0] != 0x04) {
-                realCipher = new byte[cipher.length + 1];
-                realCipher[0] = 0x04;
-                System.arraycopy(cipher, 0, realCipher, 1, cipher.length);
-            }
+            byte[] realCipher = adapt(cipher);
+            return SM2Util.decrypt(privateKey, realCipher);
+        }
+
+        /**
+         * 生产中使用这个，前端sm-crypto库默认结果是hex string
+         * 如果前端将hex string转成字节数组再编码为base64，会短一点，节省网络开销
+         */
+        public static byte[] doDecryptBase64(String encryptDataBase64, ECPrivateKeyParameters privateKey) throws InvalidCipherTextException {
+            byte[] cipher = Base64.decode(encryptDataBase64);
+            byte[] realCipher = adapt(cipher);
             return SM2Util.decrypt(privateKey, realCipher);
         }
 

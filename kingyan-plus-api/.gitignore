@@ -1,4 +1,5 @@
 application.yml
+.mvn
 
 HELP.md
 target/
