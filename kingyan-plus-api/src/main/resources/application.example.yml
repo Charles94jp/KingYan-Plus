@@ -17,6 +17,8 @@ sa-token:
   timeout: 2592000
   is-concurrent: true
   is-share: false
+  # 登陆前也能在satoken的session中存数据
+  tokenSessionCheckLogin: false
 
 # 如何生成见单元测试com.yunmuq.kingyanplus.sm.SMCryptoTest
 sm2-key-pair:

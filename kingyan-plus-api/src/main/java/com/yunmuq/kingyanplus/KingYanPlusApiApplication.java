@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class KingyanPlusApiApplication {
+public class KingYanPlusApiApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(KingyanPlusApiApplication.class, args);
+        SpringApplication.run(KingYanPlusApiApplication.class, args);
     }
 
 }

@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * 需要结合前端库 sm-crypto 进行测试
+ * <b>部署时不要使用本文件中的密钥对，需要运行单元测试生成</b>
  */
 class SMCryptoTest {
 

@@ -1,6 +1,5 @@
 package com.yunmuq.kingyanplus.model.response;
 
-import com.yunmuq.kingyanplus.dto.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,16 +7,14 @@ import lombok.NoArgsConstructor;
 /**
  * @author yunmuq
  * @version v1.0.0
- * @since 2022-05-02
+ * @since 2022-05-04
  * @since 1.8
  * @since spring boot 2.6.7
  */
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class LoginResponse {
+@AllArgsConstructor
+public class CommonResponse {
     private boolean success;
-    private boolean captchaCheck;
-    private String msg;
-    private User user;
+    private String Message;
 }

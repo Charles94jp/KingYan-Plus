@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoginRequest {
+    private String captcha;
     private String userName;
     private String password;
     private boolean rememberMe;

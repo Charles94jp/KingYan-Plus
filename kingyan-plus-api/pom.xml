@@ -94,6 +94,14 @@
             <version>1.29.0</version>
         </dependency>
 
+        <!--登录，验证码-->
+        <dependency>
+            <groupId>com.github.whvcse</groupId>
+            <artifactId>easy-captcha</artifactId>
+            <version>1.6.2</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>
