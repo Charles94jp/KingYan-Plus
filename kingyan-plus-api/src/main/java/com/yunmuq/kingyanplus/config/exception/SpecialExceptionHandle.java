@@ -1,5 +1,8 @@
 package com.yunmuq.kingyanplus.config.exception;
 
+import cn.dev33.satoken.exception.NotLoginException;
+import cn.dev33.satoken.exception.NotPermissionException;
+import cn.dev33.satoken.exception.NotRoleException;
 import com.alibaba.fastjson.JSONException;
 import com.yunmuq.kingyanplus.model.response.CommonErrorResponse;
 import org.slf4j.Logger;
@@ -44,11 +47,39 @@ public class SpecialExceptionHandle {
     @ExceptionHandler(value = {JSONException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public CommonErrorResponse handleMessageNotReadableException(JSONException e) {
-        logger.error("fastjson序列/反序列化异常，通常消息转换时前端传来的json格式错误，报safeMode是遭受攻击", e);
+        logger.debug("fastjson序列/反序列化异常，通常消息转换时前端传来的json格式错误，报safeMode是遭受攻击", e);
         final int errorCode = 1001;
         Locale locale = LocaleContextHolder.getLocale();
         String msg = messageSource.getMessage("errorCode." + errorCode, null, locale);
         CommonErrorResponse commonErrorResponse = new CommonErrorResponse(1001, msg, e);
+        return commonErrorResponse;
+    }
+
+    /**
+     * sa-token鉴权失败：未登录
+     */
+    @ExceptionHandler(value = NotLoginException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public CommonErrorResponse handleNotLoginException(NotLoginException e) {
+        logger.trace("用户未登录，请求被拦截", e);
+        final int errorCode = 401;
+        Locale locale = LocaleContextHolder.getLocale();
+        String msg = messageSource.getMessage("errorCode." + errorCode, null, locale);
+        CommonErrorResponse commonErrorResponse = new CommonErrorResponse(errorCode, msg, e);
+        return commonErrorResponse;
+    }
+
+    /**
+     * sa-token鉴权失败：权限不足
+     */
+    @ExceptionHandler(value = {NotPermissionException.class, NotRoleException.class})
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public CommonErrorResponse handleNotPermissionAndRoleException(Exception e) {
+        logger.trace("用户权限不足，请求被拦截", e);
+        final int errorCode = 403;
+        Locale locale = LocaleContextHolder.getLocale();
+        String msg = messageSource.getMessage("errorCode." + errorCode, null, locale);
+        CommonErrorResponse commonErrorResponse = new CommonErrorResponse(errorCode, msg, e);
         return commonErrorResponse;
     }
 }

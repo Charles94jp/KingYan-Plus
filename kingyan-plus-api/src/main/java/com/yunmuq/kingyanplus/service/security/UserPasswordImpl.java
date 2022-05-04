@@ -64,8 +64,8 @@ public class UserPasswordImpl implements UserPassword {
         byte[] plainPwd = decryptSM2(PwdEncryptedBySM2);
         byte[] encodedPasswordSM3Hash = Base64.decode(PwdHashedBySM3);
         if (encodedPasswordSM3Hash.length != saltLength * 2) {
-            logger.debug("SMCryptPasswordEncoder密码密文encodedPassword格式错误，SM3密文长度和盐值长度不相等，可能是数据库被污染{}",
-                    LogUtil.LogCurrentFileAndLine());
+            logger.error("SM3密码密文格式错误，可能是数据库被污染",
+                    new Exception("SM3密文长度和盐值长度不相等"));
             return false;
         }
         // 前面是盐值，后面是真的hash
@@ -98,7 +98,7 @@ public class UserPasswordImpl implements UserPassword {
         byte[] sm3Hash = SM3Util.hash(join);
 
         if (sm3Hash.length != saltLength) {
-            logger.error("SMCryptPasswordEncoder加密用户密码错误",
+            logger.error("SM3加密用户密码时出错",
                     new Exception("SM3密文长度和盐值长度不相等"));
             return null;
         }
