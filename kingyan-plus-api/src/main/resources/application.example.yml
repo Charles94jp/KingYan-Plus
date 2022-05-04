@@ -14,11 +14,14 @@ spring:
 sa-token:
   token-name: kysession
   token-style: simple-uuid
+  #   max: 2147483648，cookie超时时间（s），不要超过int范围，虽然satoken是long
   timeout: 2592000
   is-concurrent: true
   is-share: false
   # 登陆前也能在satoken的session中存数据
   tokenSessionCheckLogin: false
+  cookie:
+    httpOnly: true
 
 # 如何生成见单元测试com.yunmuq.kingyanplus.sm.SMCryptoTest
 sm2-key-pair:

@@ -4,6 +4,7 @@ import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.exception.NotPermissionException;
 import cn.dev33.satoken.exception.NotRoleException;
 import com.alibaba.fastjson.JSONException;
+import com.yunmuq.kingyanplus.model.exception.CommonRuntimeException;
 import com.yunmuq.kingyanplus.model.response.CommonErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Locale;
 
 /**
@@ -81,5 +83,19 @@ public class SpecialExceptionHandle {
         String msg = messageSource.getMessage("errorCode." + errorCode, null, locale);
         CommonErrorResponse commonErrorResponse = new CommonErrorResponse(errorCode, msg, e);
         return commonErrorResponse;
+    }
+
+    @ExceptionHandler(value = {CommonRuntimeException.class})
+    public CommonErrorResponse handleCommonRuntimeException(HttpServletResponse response, CommonRuntimeException e) {
+        int errorCode = e.getErrorCode();
+        Locale locale = LocaleContextHolder.getLocale();
+        String msg = messageSource.getMessage("errorCode." + errorCode, null, locale);
+        switch (errorCode) {
+            case 1002:
+                response.setStatus(403);
+                logger.debug("请求缺少X-XSRF-TOKEN头", e);
+                break;
+        }
+        return new CommonErrorResponse(errorCode, msg);
     }
 }

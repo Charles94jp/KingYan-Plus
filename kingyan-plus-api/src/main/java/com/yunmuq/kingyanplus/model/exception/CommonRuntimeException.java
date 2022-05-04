@@ -10,6 +10,9 @@ package com.yunmuq.kingyanplus.model.exception;
  * @since spring boot 2.6.6
  */
 public class CommonRuntimeException extends RuntimeException {
+    /**
+     * 错误代码及其对应定义见：resource/i18n/
+     */
     private int errorCode;
 
     public CommonRuntimeException(int errorCode, String msg) {

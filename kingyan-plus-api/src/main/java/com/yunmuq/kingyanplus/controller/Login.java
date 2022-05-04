@@ -1,5 +1,6 @@
 package com.yunmuq.kingyanplus.controller;
 
+import cn.dev33.satoken.SaManager;
 import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.session.SaSession;
 import cn.dev33.satoken.stp.SaLoginModel;
@@ -24,9 +25,11 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
 import java.util.Locale;
+import java.util.UUID;
 
 /**
  * @author yunmuq
@@ -102,7 +105,7 @@ public class Login {
      * 勾选后，Set-Cookie时添加过期时间，关闭浏览器不会丢失cookie
      */
     @PostMapping("/login")
-    public LoginResponse login(@RequestBody LoginRequest loginMsg) {
+    public LoginResponse login(@RequestBody LoginRequest loginMsg, HttpServletResponse response) {
         LoginResponse loginResponse = new LoginResponse();
         Locale locale = LocaleContextHolder.getLocale();
 
@@ -123,7 +126,7 @@ public class Login {
         }
         if (System.currentTimeMillis() - captchaCreateTime > captchaTimeout) {
             tips = messageSource.getMessage("login.captcha-timeout", null, locale);
-            tips = tips.replace("{}", String.valueOf(captchaTimeout/1000));
+            tips = tips.replace("{}", String.valueOf(captchaTimeout / 1000));
             loginResponse.setMsg(tips);
             return loginResponse;
         }
@@ -170,6 +173,14 @@ public class Login {
         StpUtil.login(loginMsg.getUserName(), new SaLoginModel()
                 .setIsLastingCookie(loginMsg.isRememberMe())   // 是否为持久Cookie（临时Cookie在浏览器关闭时会自动删除，持久Cookie在重新打开后依然存在）
         );
+        String uuid = UUID.randomUUID().toString();
+        StpUtil.getTokenSession().set("csrfToken", uuid);
+        // 使用X-XSRF-TOKEN，校验头，前端axios会自动添加到header中
+        Cookie csrfCookie = new Cookie("X-XSRF-TOKEN", uuid);
+        // long转int
+        csrfCookie.setMaxAge((int) SaManager.getConfig().getTimeout());
+        csrfCookie.setPath("/");
+        response.addCookie(csrfCookie);
         // 密码不要给前端
         user.setPassword(null);
         tips = messageSource.getMessage("login.success", null, locale);
@@ -180,15 +191,10 @@ public class Login {
 
     @GetMapping("/logout")
     public CommonResponse logout() {
+        StpUtil.getTokenSession().clear();
         StpUtil.logout();
         Locale locale = LocaleContextHolder.getLocale();
         String tips = messageSource.getMessage("logout.success", null, locale);
         return new CommonResponse(!StpUtil.isLogin(), tips);
-    }
-
-    @GetMapping("/hello")
-    @SaCheckRole("admin")
-    public String hello() {
-        return "hello";
     }
 }
