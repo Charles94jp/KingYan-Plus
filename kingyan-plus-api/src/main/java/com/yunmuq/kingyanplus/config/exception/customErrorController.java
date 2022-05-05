@@ -52,7 +52,6 @@ public class customErrorController implements ErrorController {
                 msg = messageSource.getMessage("errorCode." + httpStatus, null, locale);
             } catch (NoSuchMessageException noSuchMsgE) {
                 // 未预先设置i18n错误消息
-                // todo: Controller中要抛出指定errorCode和异常时怎么处理
             }
             Exception exception = (Exception) request.getAttribute("javax.servlet.error.exception");
             return new CommonErrorResponse(httpStatus, msg, exception);

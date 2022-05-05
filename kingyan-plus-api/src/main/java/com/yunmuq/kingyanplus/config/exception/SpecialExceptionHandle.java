@@ -85,11 +85,15 @@ public class SpecialExceptionHandle {
         return commonErrorResponse;
     }
 
+    /**
+     * 处理程序抛出的指定异常
+     */
     @ExceptionHandler(value = {CommonRuntimeException.class})
     public CommonErrorResponse handleCommonRuntimeException(HttpServletResponse response, CommonRuntimeException e) {
         int errorCode = e.getErrorCode();
         Locale locale = LocaleContextHolder.getLocale();
         String msg = messageSource.getMessage("errorCode." + errorCode, null, locale);
+        // 错误代码及其对应定义见：resource/i18n/
         switch (errorCode) {
             case 1002:
                 response.setStatus(403);

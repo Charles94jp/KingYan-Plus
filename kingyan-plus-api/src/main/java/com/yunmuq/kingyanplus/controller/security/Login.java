@@ -1,14 +1,12 @@
-package com.yunmuq.kingyanplus.controller;
+package com.yunmuq.kingyanplus.controller.security;
 
 import cn.dev33.satoken.SaManager;
-import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.session.SaSession;
 import cn.dev33.satoken.stp.SaLoginModel;
 import cn.dev33.satoken.stp.StpUtil;
 import com.wf.captcha.GifCaptcha;
-import com.wf.captcha.SpecCaptcha;
 import com.wf.captcha.base.Captcha;
-import com.wf.captcha.utils.CaptchaUtil;
+import com.yunmuq.kingyanplus.config.KingYanConfig;
 import com.yunmuq.kingyanplus.config.LoginConfigEntity;
 import com.yunmuq.kingyanplus.dto.User;
 import com.yunmuq.kingyanplus.mapper.UserMapper;
@@ -17,7 +15,6 @@ import com.yunmuq.kingyanplus.model.response.CommonResponse;
 import com.yunmuq.kingyanplus.model.response.LoginConfigResponse;
 import com.yunmuq.kingyanplus.model.response.LoginResponse;
 import com.yunmuq.kingyanplus.service.security.UserPassword;
-import com.yunmuq.kingyanplus.util.LogUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +24,13 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-import java.awt.*;
 import java.util.Locale;
 import java.util.UUID;
 
 /**
+ * 登录登出是操作HTTP的，没法写进service中，但是也没有删、改查操作。而且也不算业务，是安全方面的代码
+ * 注册更类似于业务
+ *
  * @author yunmuq
  * @version v1.0.0
  * @since 2022-05-02
@@ -56,48 +55,13 @@ public class Login {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    /**
-     * 图片验证码过期时间，单位ms
-     */
-    private final int captchaTimeout = 60000;
-
-    /**
-     * 验证码长度
-     */
-    private final int captchaLength = 5;
+    @Autowired
+    KingYanConfig kingyanConfig;
 
     @GetMapping("/getLoginConfig")
     public LoginConfigResponse getLoginConfig() {
         LoginConfigResponse loginConfigResponse = new LoginConfigResponse(loginConfigEntity.getPublicKeyHex());
         return loginConfigResponse;
-    }
-
-    @GetMapping("/getCaptchaImg")
-    public void captcha(HttpServletResponse response) throws Exception {
-        // 设置请求头为输出图片类型
-        response.setContentType("image/gif");
-        response.setHeader("Pragma", "No-cache");
-        response.setHeader("Cache-Control", "no-cache");
-        response.setDateHeader("Expires", 0);
-
-        // 三个参数分别为宽、高、位数
-        GifCaptcha captcha = new GifCaptcha(130, 48, captchaLength);
-        // 设置字体
-        // captcha.setFont(new Font("Verdana", Font.PLAIN, 32));  // 有默认字体，可以不用设置
-        captcha.setFont(Captcha.FONT_8);
-        // 设置类型，纯数字、纯字母、字母数字混合
-        captcha.setCharType(Captcha.TYPE_NUM_AND_UPPER);
-        // 存入satoken的session，而非Spring的HTTPSession
-        // StpUtil.getSession是必须要登录才能用
-        // getTokenSession配置文件开启tokenSessionCheckLogin: false
-        SaSession session = StpUtil.getTokenSession();
-        session.set("captcha", captcha.text().toLowerCase());
-        session.set("captchaCreateTime", System.currentTimeMillis());
-        // 输出图片流
-        captcha.out(response.getOutputStream());
-
-        // 使用默认工具，使用http session完成
-        //CaptchaUtil.out(request, response);
     }
 
     /**
@@ -110,6 +74,8 @@ public class Login {
         Locale locale = LocaleContextHolder.getLocale();
 
         ////// 1.校验验证码
+        final int captchaLength = kingyanConfig.getCaptcha().getCaptchaLength();
+        final int captchaTimeout = kingyanConfig.getCaptcha().getCaptchaTimeout();
         String tips = messageSource.getMessage("login.captcha-fail", null, locale);
         String captcha = loginMsg.getCaptcha();
         // 短路或，左边是true右边就不会运算
@@ -179,6 +145,7 @@ public class Login {
         Cookie csrfCookie = new Cookie("X-XSRF-TOKEN", uuid);
         // long转int
         csrfCookie.setMaxAge((int) SaManager.getConfig().getTimeout());
+        // todo: 添加一个不存在的path，让浏览器不在Cookie header中带上，但是axios自动带上，节省网络开销
         csrfCookie.setPath("/");
         response.addCookie(csrfCookie);
         // 密码不要给前端
