@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 不要将密码返回给前端
+ * 弃用的方案：dto对象，给前端的以及给sa-token去赋权的，应该是{@link com.yunmuq.kingyanplus.model.UserDetails}
  *
  * @author yunmuq
  * @version v1.0.0
@@ -24,7 +24,14 @@ public class User {
     private BigInteger id;
     private String name;
     private String password;
-    private List<String> roles;
+    /**
+     * 角色是抽象的，它开源包含多个权限，并能在运行中更改。代码中只基于权限做校验
+     */
+    private List<Role> roles;
+    /**
+     * 用户真正的权限=用户的权限+用户角色中的权限，去重
+     */
+    private List<Permission> permissions;
     private String nickname;
     /**
      * 数据库中为char，0未知，1男，2女

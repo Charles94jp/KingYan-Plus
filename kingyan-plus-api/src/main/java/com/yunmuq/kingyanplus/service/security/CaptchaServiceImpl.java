@@ -3,6 +3,7 @@ package com.yunmuq.kingyanplus.service.security;
 import cn.dev33.satoken.session.SaSession;
 import cn.dev33.satoken.stp.StpUtil;
 import com.wf.captcha.GifCaptcha;
+import com.wf.captcha.base.Captcha;
 import com.yunmuq.kingyanplus.config.KingYanConfig;
 import com.yunmuq.kingyanplus.model.CheckCaptchaResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.io.OutputStream;
 import java.util.Locale;
 
 /**
@@ -35,7 +35,7 @@ public class CaptchaServiceImpl implements CaptchaService{
      * @throws Exception
      */
     @Override
-    public String generateCaptcha(OutputStream out) throws Exception {
+    public Captcha generateCaptcha() throws Exception {
         // 三个参数分别为宽、高、位数
         GifCaptcha captcha = new GifCaptcha(130, 48, kingyanConfig.getCaptcha().getCaptchaLength());
         // 设置字体
@@ -44,8 +44,8 @@ public class CaptchaServiceImpl implements CaptchaService{
         // 设置类型，纯数字、纯字母、字母数字混合
         captcha.setCharType(com.wf.captcha.base.Captcha.TYPE_NUM_AND_UPPER);
         // 输出图片流
-        captcha.out(out);
-        return captcha.text();
+        // captcha.out(out);
+        return captcha;
     }
 
     @Override

@@ -126,6 +126,7 @@ public class Login {
         csrfCookie.setPath("/");
         response.addCookie(csrfCookie);
         // 密码不要给前端
+        // 如果mapper开启二级缓存会污染缓存
         user.setPassword(null);
         loginResponse.setUser(user);
         tips = messageSource.getMessage("login.success", null, locale);

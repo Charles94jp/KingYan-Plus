@@ -1,6 +1,8 @@
 package com.yunmuq.kingyanplus.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaCheckRole;
+import cn.dev33.satoken.annotation.SaMode;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,8 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class Hello {
     @GetMapping("/hello")
-    @SaCheckRole("admin")
+    @SaCheckPermission(value = {"hello-read", "hello-all"}, mode = SaMode.OR)
     public String hello() {
         return "hello";
+    }
+
+    @GetMapping("/helloName")
+    @SaCheckPermission("hello-all")
+    public String helloName(String name) {
+        return "hello" + name;
     }
 }

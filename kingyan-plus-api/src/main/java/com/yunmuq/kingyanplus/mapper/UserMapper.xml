@@ -5,28 +5,54 @@
 
 <mapper namespace="com.yunmuq.kingyanplus.mapper.UserMapper">
     <!--login和StpInterfaceImpl要重复查询一次-->
-<!--    <cache-->
-<!--            eviction="LRU"-->
-<!--            flushInterval="1000"-->
-<!--            size="512"-->
-<!--            readOnly="true"/>-->
+    <!--login返回user对象时，因为要删除密码，会污染缓存对象-->
+    <!--    <cache-->
+    <!--            eviction="LRU"-->
+    <!--            flushInterval="1000"-->
+    <!--            size="512"-->
+    <!--            readOnly="true"/>-->
 
-    <select id="selectUserByUserName" resultMap="UserRole">
+    <select id="selectUserByUserName" resultMap="UserAuth">
         SELECT *
         FROM kingyan_plus.user
         WHERE name = #{userName}
     </select>
 
-    <select id="selectRolesByUserId" resultType="string">
-        SELECT r.name
+    <select id="selectPermissionsByUserId" resultType="com.yunmuq.kingyanplus.dto.Permission">
+        SELECT p.id, p.name
+        FROM user_permission up,
+             permission p
+        WHERE up.permission_id = p.id
+          AND up.user_id = #{id}
+    </select>
+
+    <select id="selectRolesByUserId" resultMap="RolePermission">
+        SELECT r.id, r.name
         FROM user_role ur,
              role r
         WHERE ur.role_id = r.id
           AND ur.user_id = #{id}
     </select>
 
-    <resultMap id="UserRole" type="com.yunmuq.kingyanplus.dto.User" autoMapping="true">
-        <collection property="roles" column="id" ofType="string" autoMapping="true"
+    <select id="selectPermissionsByRoleId" resultType="com.yunmuq.kingyanplus.dto.Permission">
+        SELECT p.id, p.name
+        FROM role_permission rp,
+             permission p
+        WHERE rp.permission_id = p.id
+          AND rp.role_id = #{id}
+    </select>
+
+    <resultMap id="RolePermission" type="com.yunmuq.kingyanplus.dto.Role" autoMapping="true">
+        <collection property="permissions" column="id" ofType="com.yunmuq.kingyanplus.dto.Permission" autoMapping="true"
+                    select="selectPermissionsByRoleId" javaType="arraylist">
+        </collection>
+    </resultMap>
+
+    <resultMap id="UserAuth" type="com.yunmuq.kingyanplus.dto.User" autoMapping="true">
+        <collection property="permissions" column="id" ofType="com.yunmuq.kingyanplus.dto.Permission" autoMapping="true"
+                    select="selectPermissionsByUserId" javaType="arraylist">
+        </collection>
+        <collection property="roles" column="id" ofType="com.yunmuq.kingyanplus.dto.Role" autoMapping="true"
                     select="selectRolesByUserId" javaType="arraylist">
         </collection>
     </resultMap>

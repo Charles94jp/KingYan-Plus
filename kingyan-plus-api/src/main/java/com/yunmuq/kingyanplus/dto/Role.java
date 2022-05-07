@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
  * @author yunmuq
  * @version v1.0.0
@@ -17,4 +19,5 @@ import lombok.NoArgsConstructor;
 public class Role {
     private int id;
     private String name;
+    private List<Permission> permissions;
 }

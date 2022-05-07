@@ -2,6 +2,7 @@ package com.yunmuq.kingyanplus.controller.security;
 
 import cn.dev33.satoken.session.SaSession;
 import cn.dev33.satoken.stp.StpUtil;
+import com.wf.captcha.base.Captcha;
 import com.yunmuq.kingyanplus.service.security.CaptchaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @RestController
 @RequestMapping("/auth")
-public class Captcha {
+public class CaptchaController {
 
     @Autowired
     CaptchaService captchaService;
@@ -33,15 +34,18 @@ public class Captcha {
         response.setHeader("Cache-Control", "no-cache");
         response.setDateHeader("Expires", 0);
 
-        // 输出图片流
-        String captchaText = captchaService.generateCaptcha(response.getOutputStream());
+        Captcha captcha = captchaService.generateCaptcha();
 
         // 存入satoken的session，而非Spring的HTTPSession
         // StpUtil.getSession是必须要登录才能用
         // getTokenSession配置文件开启tokenSessionCheckLogin: false
         SaSession session = StpUtil.getTokenSession();
-        session.set("captcha", captchaText.toLowerCase());
+        session.set("captcha", captcha.text().toLowerCase());
         session.set("captchaCreateTime", System.currentTimeMillis());
+
+        // 输出图片流
+        // 一定要在最后，否则StpUtil Cookie没设置好就返回数据了
+        captcha.out(response.getOutputStream());
 
         // 使用默认工具，使用http session完成
         //CaptchaUtil.out(request, response);

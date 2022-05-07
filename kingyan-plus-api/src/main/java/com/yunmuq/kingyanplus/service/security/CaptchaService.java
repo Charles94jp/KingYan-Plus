@@ -1,9 +1,7 @@
 package com.yunmuq.kingyanplus.service.security;
 
-import com.yunmuq.kingyanplus.config.KingYanCaptchaConfig;
+import com.wf.captcha.base.Captcha;
 import com.yunmuq.kingyanplus.model.CheckCaptchaResult;
-
-import java.io.OutputStream;
 
 /**
  * @author yunmuq
@@ -19,6 +17,6 @@ public interface CaptchaService {
      * @return 验证码的答案
      * @throws Exception
      */
-    public String generateCaptcha(OutputStream out) throws Exception;
+    public Captcha generateCaptcha() throws Exception;
     public CheckCaptchaResult checkCaptcha(String captcha);
 }

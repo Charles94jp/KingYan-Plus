@@ -4,6 +4,7 @@ USE kingyan_plus;
 
 DROP TABLE IF EXISTS `user`;
 
+# 角色和权限去关系表查
 CREATE TABLE IF NOT EXISTS `user`
 (
     `id`           bigint(20)   NOT NULL    COMMENT '用户ID',
@@ -40,7 +41,8 @@ CREATE TABLE IF NOT EXISTS `role`
 
 INSERT INTO `role` (id, name)
 VALUES (1, 'admin'),
-       (2, 'test');
+       (2, 'test'),
+       (3, 'all');
 
 DROP TABLE IF EXISTS `user_role`;
 
@@ -57,4 +59,49 @@ CREATE TABLE IF NOT EXISTS `user_role`
 INSERT INTO `user_role` (id, user_id, role_id)
 VALUES (1, 1, 1),
        (2, 2, 2),
-       (3, 3, 2);
+       (3, 3, 2),
+       (4, 1, 3);
+
+DROP TABLE IF EXISTS `permission`;
+
+CREATE TABLE IF NOT EXISTS `permission`
+(
+    `id`   int(20)     NOT NULL COMMENT '权限id',
+    `name` varchar(30) NOT NULL COMMENT '权限名',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
+
+INSERT INTO `permission` (id, name)
+VALUES (1, 'hello-read'),
+       (2, 'hello-all');
+
+DROP TABLE IF EXISTS `user_permission`;
+
+# 用户，权限多对多，关系表
+CREATE TABLE IF NOT EXISTS `user_permission`
+(
+    `id`      bigint(20) NOT NULL COMMENT '对应关系的id',
+    `user_id` bigint(20) NOT NULL,
+    `permission_id` bigint(20) NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
+
+INSERT INTO `user_permission` (id, user_id, permission_id)
+VALUES (1, 1, 1);
+
+DROP TABLE IF EXISTS `role_permission`;
+
+# 角色，权限多对多，关系表
+CREATE TABLE IF NOT EXISTS `role_permission`
+(
+    `id`      bigint(20) NOT NULL COMMENT '对应关系的id',
+    `role_id` bigint(20) NOT NULL,
+    `permission_id` bigint(20) NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
+
+INSERT INTO `role_permission` (id, role_id, permission_id)
+VALUES (1, 1, 1);
