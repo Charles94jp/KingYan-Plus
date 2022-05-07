@@ -1,5 +1,12 @@
 package com.yunmuq.kingyanplus.controller.security;
 
+import com.yunmuq.kingyanplus.model.request.RegistrationRequest;
+import com.yunmuq.kingyanplus.model.response.CommonResponse;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 /**
  * todo: feat
  *
@@ -9,5 +16,11 @@ package com.yunmuq.kingyanplus.controller.security;
  * @since 1.8
  * @since spring boot 2.6.7
  */
+@RestController
+@RequestMapping("/auth")
 public class Registration {
+    @PostMapping("/register")
+    public CommonResponse register(@RequestBody RegistrationRequest registrationMsg) {
+        return new CommonResponse();
+    }
 }
