@@ -1,0 +1,12 @@
+*           text=auto
+*.java      text
+*.xml       text
+*.json      text
+*.js        text
+*.ts        text
+*.css       text
+*.less      text
+*.scss      text
+*.html      text
+*.vue       text
+*.md        text eol=crlf
