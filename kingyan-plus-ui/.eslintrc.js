@@ -18,6 +18,8 @@ module.exports = {
   ],
   rules: {
     // 禁用var
-    'no-var': 'error'
+    'no-var': 'error',
+    // 取消multi-word
+    'vue/multi-word-component-names': 0
   }
 }
