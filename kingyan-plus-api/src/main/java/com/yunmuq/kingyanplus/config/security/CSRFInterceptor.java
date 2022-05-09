@@ -24,6 +24,8 @@ public class CSRFInterceptor implements HandlerInterceptor {
         if (!(handler instanceof HandlerMethod)) {
             return true;
         }
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) throw new CommonRuntimeException(1002, "csrf攻击");
         for (Cookie c : request.getCookies()) {
             if (c.getName().equals("X-XSRF-TOKEN") &&
                     c.getValue().equals(StpUtil.getTokenSession().get("csrfToken"))) {

@@ -106,6 +106,19 @@ public class SMCrypto {
          * 如果前端将hex string转成字节数组再编码为base64，会短一点，节省网络开销
          */
         public static byte[] doDecryptBase64(String encryptDataBase64, ECPrivateKeyParameters privateKey) throws InvalidCipherTextException {
+            // 前端浏览器加密方法
+            // const sm2 = require('sm-crypto').sm2;
+            // const {Base64} = require('js-base64');
+            // import hexToArrayBuffer from 'hex-to-array-buffer'
+            // b=sm2.doEncrypt('123@Test',publicKey,1);
+            // b = hexToArrayBuffer(b)
+            // b=Base64.fromUint8Array(new Uint8Array(byte));
+
+            // node.js命令行可以使用Buffer，少用一个库。而浏览器无法使用Buffer
+            // const sm2 = require('sm-crypto').sm2;
+            // const {Base64} = require('js-base64');
+            // b=sm2.doEncrypt('123@Test',publicKey,1);
+            // b=Base64.fromUint8Array(Uint8Array.from(Buffer.from(b,'hex')));
             byte[] cipher = Base64.decode(encryptDataBase64);
             byte[] realCipher = adapt(cipher);
             return SM2Util.decrypt(privateKey, realCipher);

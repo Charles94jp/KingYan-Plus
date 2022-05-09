@@ -1,6 +1,7 @@
 package com.yunmuq.kingyanplus.controller.security;
 
 import cn.dev33.satoken.SaManager;
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.stp.SaLoginModel;
 import cn.dev33.satoken.stp.StpUtil;
 import com.yunmuq.kingyanplus.config.LoginConfigEntity;
@@ -142,5 +143,11 @@ public class Login {
         Locale locale = LocaleContextHolder.getLocale();
         String tips = messageSource.getMessage("logout.success", null, locale);
         return new CommonResponse(!StpUtil.isLogin(), tips);
+    }
+
+    @GetMapping("heartbeat")
+    @SaCheckLogin
+    public void heartbeat(){
+
     }
 }

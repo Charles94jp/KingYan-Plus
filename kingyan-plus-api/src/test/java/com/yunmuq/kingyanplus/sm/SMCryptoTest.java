@@ -85,6 +85,7 @@ class SMCryptoTest {
         final String publicKey = "04AFA94981BA33B3543951EF7DC675C02295004BD90298B70119639508B74899BF92C063DD6765898986655111D706EF9D4CA8DB94328981856633B834E49998AE";
         final String plainText = "123@Test";
         // 前端sm-crypto使用后端的公钥加密
+        // node.js命令行，vue中不可使用Buffer，会在浏览器中报错
         // const sm2 = require('sm-crypto').sm2;
         // const {Base64} = require('js-base64');
         // b=sm2.doEncrypt('123@Test',publicKey,1);

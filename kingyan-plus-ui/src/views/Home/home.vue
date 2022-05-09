@@ -49,18 +49,20 @@ interface User {
   createdDate: string
 }
 
-const user = ref<User>()
+// const user = ref<User>()
 const userName = ref('')
 const userRole = ref('')
 
-service.get('auth/getUserInfo').then(r => {
-  user.value = r.data as any
-  userName.value = user.value?.name as string
-  userRole.value = user.value?.role.name as string
-}).catch(e => console.log(e))
+service.get('/auth/heartbeat')
+
+// service.get('/auth/getUserInfo').then(r => {
+//   user.value = r.data as any
+//   userName.value = user.value?.name as string
+//   userRole.value = user.value?.role.name as string
+// }).catch(e => console.log(e))
 
 function logout () {
-  service.post('/logout').then(r => {
+  service.post('/auth/logout').then(r => {
     if (r.data.success) {
       elMessage.elMessage('退出成功', 'success')
     }

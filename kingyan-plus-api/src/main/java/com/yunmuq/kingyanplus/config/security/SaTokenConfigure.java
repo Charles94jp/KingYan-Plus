@@ -14,7 +14,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Configuration
 public class SaTokenConfigure implements WebMvcConfigurer {
-    private final String[] excludePathPatterns = {"/auth/**", "/error"};
+    private final String[] excludePathPatterns = {"/auth/getLoginConfig", "/auth/login", "/auth/logout", "/error"};
     private final String[] addPathPatterns = {"/**"};
 
     // 注册Sa-Token的注解拦截器，打开注解式鉴权功能

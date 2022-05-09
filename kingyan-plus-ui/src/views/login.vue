@@ -15,7 +15,7 @@
         <div class="login-box" :class="loginBox">
           <h1>login</h1>
           <input v-model="loginData.userName" type="text" placeholder="用户名">
-          <input v-model="loginData.pwd" type="password" placeholder="密码">
+          <input v-model="loginData.password" type="password" placeholder="密码">
           <button @click="login">登录</button>
         </div>
       </div>
@@ -43,8 +43,9 @@ import service from '@/axios'
 import { reactive, ref } from 'vue'
 import router from '@/router'
 import elMessage from '@/util/el-message'
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const sm2 = require('sm-crypto').sm2
+import { sm2 } from 'sm-crypto'
+import { Base64 } from 'js-base64'
+import hexToArrayBuffer from 'hex-to-array-buffer'
 
 // todo: 图片验证码
 interface LoginConfig {
@@ -53,31 +54,34 @@ interface LoginConfig {
 
 const loginConfig = ref<LoginConfig>()
 
-// todo: 有公钥就不再请求公钥
-service({ method: 'get', url: '/getLoginConfig' })
+service({ method: 'get', url: '/auth/getLoginConfig' })
   .then(({ data }) => {
     loginConfig.value = data
   })
 
-const loginData = reactive({ userName: '', pwd: '' })
-const encryptedLoginData = reactive({ userName: '', pwd: '' })
+// todo: captcha and rememberMe
+const loginData = reactive({ captcha: '', userName: '', password: '', rememberMe: false })
+const encryptedLoginData = reactive({ captcha: '', userName: '', password: '', rememberMe: false })
 
 function login () {
   if (loginConfig.value) {
     // encryptedLoginData.userName = sm2.doEncrypt(loginData.userName, loginConfig.value.publicKey)
     encryptedLoginData.userName = loginData.userName
-    encryptedLoginData.pwd = sm2.doEncrypt(loginData.pwd, loginConfig.value.publicKey)
+    encryptedLoginData.password = sm2.doEncrypt(loginData.password, loginConfig.value.publicKey)
+    const byte = hexToArrayBuffer(encryptedLoginData.password)
+    encryptedLoginData.password = Base64.fromUint8Array(new Uint8Array(byte))
   }
   service({
     method: 'POST',
-    url: '/login',
-    data: 'username=' + encryptedLoginData.userName + '&password=' + encryptedLoginData.pwd
+    url: '/auth/login',
+    data: encryptedLoginData
   })
     .then(({ data }) => {
       if (data.success) {
         router.push('/')
       } else {
-        elMessage.elMessage(data.error.message, 'warning')
+        // todo: elMessage style error
+        elMessage.elMessage(data.msg, 'warning')
       }
     })
 }
