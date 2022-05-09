@@ -41,8 +41,7 @@ CREATE TABLE IF NOT EXISTS `role`
 
 INSERT INTO `role` (id, name)
 VALUES (1, 'admin'),
-       (2, 'test'),
-       (3, 'all');
+       (2, 'test');
 
 DROP TABLE IF EXISTS `user_role`;
 
@@ -59,8 +58,7 @@ CREATE TABLE IF NOT EXISTS `user_role`
 INSERT INTO `user_role` (id, user_id, role_id)
 VALUES (1, 1, 1),
        (2, 2, 2),
-       (3, 3, 2),
-       (4, 1, 3);
+       (3, 3, 2);
 
 DROP TABLE IF EXISTS `permission`;
 
@@ -89,7 +87,7 @@ CREATE TABLE IF NOT EXISTS `user_permission`
   DEFAULT CHARSET = utf8;
 
 INSERT INTO `user_permission` (id, user_id, permission_id)
-VALUES (1, 1, 1);
+VALUES (1, 1, 2);
 
 DROP TABLE IF EXISTS `role_permission`;
 
@@ -104,4 +102,5 @@ CREATE TABLE IF NOT EXISTS `role_permission`
   DEFAULT CHARSET = utf8;
 
 INSERT INTO `role_permission` (id, role_id, permission_id)
-VALUES (1, 1, 1);
+VALUES (1, 1, 2),
+       (2, 2, 1);
