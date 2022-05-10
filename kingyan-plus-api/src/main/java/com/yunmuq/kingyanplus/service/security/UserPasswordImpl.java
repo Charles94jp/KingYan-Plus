@@ -1,7 +1,6 @@
 package com.yunmuq.kingyanplus.service.security;
 
 import com.yunmuq.kingyanplus.config.LoginConfigEntity;
-import com.yunmuq.kingyanplus.util.LogUtil;
 import com.yunmuq.kingyanplus.util.gmhelper.SM3Util;
 import com.yunmuq.kingyanplus.util.sm.SMCrypto;
 import org.bouncycastle.crypto.InvalidCipherTextException;
@@ -9,7 +8,6 @@ import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.DecoderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -29,8 +27,11 @@ public class UserPasswordImpl implements UserPassword {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
-    LoginConfigEntity loginConfigEntity;
+    private final LoginConfigEntity loginConfigEntity;
+
+    public UserPasswordImpl(LoginConfigEntity loginConfigEntity) {
+        this.loginConfigEntity = loginConfigEntity;
+    }
 
     /**
      * 盐值长度：设置为和sm3 hash结果长度相同

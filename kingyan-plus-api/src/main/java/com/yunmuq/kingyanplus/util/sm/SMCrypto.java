@@ -97,8 +97,9 @@ public class SMCrypto {
          */
         public static byte[] doDecrypt(String encryptDataHex, ECPrivateKeyParameters privateKey) throws InvalidCipherTextException {
             byte[] cipher = Hex.decode(encryptDataHex);
-            byte[] realCipher = adapt(cipher);
-            return SM2Util.decrypt(privateKey, realCipher);
+            // 放到前端做，节省后端资源
+            // byte[] realCipher = adapt(cipher);
+            return SM2Util.decrypt(privateKey, cipher);
         }
 
         /**
@@ -120,8 +121,9 @@ public class SMCrypto {
             // b=sm2.doEncrypt('123@Test',publicKey,1);
             // b=Base64.fromUint8Array(Uint8Array.from(Buffer.from(b,'hex')));
             byte[] cipher = Base64.decode(encryptDataBase64);
-            byte[] realCipher = adapt(cipher);
-            return SM2Util.decrypt(privateKey, realCipher);
+            // 放到前端做，节省后端资源
+            // byte[] realCipher = adapt(cipher);
+            return SM2Util.decrypt(privateKey, cipher);
         }
 
         /**

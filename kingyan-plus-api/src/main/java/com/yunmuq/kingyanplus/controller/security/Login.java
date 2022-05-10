@@ -16,7 +16,6 @@ import com.yunmuq.kingyanplus.service.security.CaptchaService;
 import com.yunmuq.kingyanplus.service.security.UserPassword;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -40,22 +39,25 @@ import java.util.UUID;
 @RequestMapping("/auth")
 public class Login {
 
-    @Autowired
-    LoginConfigEntity loginConfigEntity;
+    private final LoginConfigEntity loginConfigEntity;
 
-    @Autowired
-    UserMapper userMapper;
+    private final UserMapper userMapper;
 
-    @Autowired
-    UserPassword userPassword;
+    private final UserPassword userPassword;
 
-    @Autowired
-    private MessageSource messageSource;
+    private final MessageSource messageSource;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
-    CaptchaService captchaService;
+    private final CaptchaService captchaService;
+
+    public Login(LoginConfigEntity loginConfigEntity, UserMapper userMapper, UserPassword userPassword, MessageSource messageSource, CaptchaService captchaService) {
+        this.loginConfigEntity = loginConfigEntity;
+        this.userMapper = userMapper;
+        this.userPassword = userPassword;
+        this.messageSource = messageSource;
+        this.captchaService = captchaService;
+    }
 
     @GetMapping("/getLoginConfig")
     public LoginConfigResponse getLoginConfig() {
@@ -89,6 +91,14 @@ public class Login {
         String userName = requestParam.getUserName();
         String userPwd = requestParam.getPassword();
         if (userName == null || userName.equals("") || userPwd == null || userPwd.equals("")) {
+            loginResponse.setMsg(tips);
+            return loginResponse;
+        }
+        try {
+            userName=new String(userPassword.decryptSM2(userName));
+        } catch (Exception e) {
+            tips = messageSource.getMessage("login.invalid-pwd", null, locale);
+            logger.info("login输入非法用户名，服务器可能遭受攻击", e);
             loginResponse.setMsg(tips);
             return loginResponse;
         }

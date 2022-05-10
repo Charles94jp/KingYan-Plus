@@ -72,9 +72,12 @@ async function login () {
         loginConfig.value = data
       })
     }
-    encryptedLoginData.userName = loginData.userName
-    encryptedLoginData.password = sm2.doEncrypt(loginData.password, loginConfig.value.publicKey)
-    const byte = hexToArrayBuffer(encryptedLoginData.password)
+    // 因为sm-crypto库的加密结果不符合规范，手动添加上第一个字节 0x04。拷贝数组性能更高，但是ArrayBuffer难写...
+    encryptedLoginData.userName = '04' + sm2.doEncrypt(loginData.userName, loginConfig.value.publicKey)
+    let byte = hexToArrayBuffer(encryptedLoginData.userName)
+    encryptedLoginData.userName = Base64.fromUint8Array(new Uint8Array(byte))
+    encryptedLoginData.password = '04' + sm2.doEncrypt(loginData.password, loginConfig.value.publicKey)
+    byte = hexToArrayBuffer(encryptedLoginData.password)
     encryptedLoginData.password = Base64.fromUint8Array(new Uint8Array(byte))
   }
   service({
