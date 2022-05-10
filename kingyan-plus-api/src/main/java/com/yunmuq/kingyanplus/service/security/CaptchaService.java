@@ -13,10 +13,9 @@ import com.yunmuq.kingyanplus.model.CheckCaptchaResult;
 public interface CaptchaService {
     /**
      * 生成随机验证码
-     * @param out 图片输出流
      * @return 验证码的答案
      * @throws Exception
      */
-    public Captcha generateCaptcha() throws Exception;
-    public CheckCaptchaResult checkCaptcha(String captcha);
+    Captcha generateCaptcha() throws Exception;
+    CheckCaptchaResult checkCaptcha(String captcha);
 }

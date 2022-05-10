@@ -22,8 +22,11 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/auth")
 public class CaptchaController {
 
-    @Autowired
-    CaptchaService captchaService;
+    private final CaptchaService captchaService;
+
+    public CaptchaController(CaptchaService captchaService) {
+        this.captchaService = captchaService;
+    }
 
     @GetMapping("/getCaptchaImg")
     public void getCaptchaImg(HttpServletResponse response) throws Exception {

@@ -23,6 +23,9 @@ public class KingYanConfig {
     /**
      * 图片验证码
      */
-    @Autowired
     private KingYanCaptchaConfig captcha;
+
+    public KingYanConfig(KingYanCaptchaConfig captcha) {
+        this.captcha = captcha;
+    }
 }

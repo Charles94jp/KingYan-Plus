@@ -27,8 +27,11 @@ import java.util.Locale;
  */
 @RestController
 public class customErrorController implements ErrorController {
-    @Autowired
-    private MessageSource messageSource;
+    private final MessageSource messageSource;
+
+    public customErrorController(MessageSource messageSource) {
+        this.messageSource = messageSource;
+    }
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 

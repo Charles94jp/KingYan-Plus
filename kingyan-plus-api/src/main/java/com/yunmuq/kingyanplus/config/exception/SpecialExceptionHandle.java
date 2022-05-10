@@ -38,8 +38,11 @@ import java.util.Locale;
 @ControllerAdvice
 @ResponseBody
 public class SpecialExceptionHandle {
-    @Autowired
-    private MessageSource messageSource;
+    private final MessageSource messageSource;
+
+    public SpecialExceptionHandle(MessageSource messageSource) {
+        this.messageSource = messageSource;
+    }
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 

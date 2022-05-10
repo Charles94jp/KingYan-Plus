@@ -6,7 +6,6 @@ import com.wf.captcha.GifCaptcha;
 import com.wf.captcha.base.Captcha;
 import com.yunmuq.kingyanplus.config.KingYanConfig;
 import com.yunmuq.kingyanplus.model.CheckCaptchaResult;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
@@ -22,15 +21,17 @@ import java.util.Locale;
  */
 @Service
 public class CaptchaServiceImpl implements CaptchaService{
-    @Autowired
-    private KingYanConfig kingyanConfig;
+    private final KingYanConfig kingyanConfig;
 
-    @Autowired
-    private MessageSource messageSource;
+    private final MessageSource messageSource;
+
+    public CaptchaServiceImpl(KingYanConfig kingyanConfig, MessageSource messageSource) {
+        this.kingyanConfig = kingyanConfig;
+        this.messageSource = messageSource;
+    }
 
     /**
      * 生成gif随机验证码，验证码配置见KingYanConfig
-     * @param out 图片输出流
      * @return 验证码的答案
      * @throws Exception
      */

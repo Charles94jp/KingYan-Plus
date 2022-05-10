@@ -5,7 +5,6 @@ import com.yunmuq.kingyanplus.dto.Permission;
 import com.yunmuq.kingyanplus.dto.Role;
 import com.yunmuq.kingyanplus.dto.User;
 import com.yunmuq.kingyanplus.mapper.UserMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -22,8 +21,11 @@ import java.util.List;
  */
 @Component
 public class StpInterfaceImpl implements StpInterface {
-    @Autowired
-    UserMapper userMapper;
+    private final UserMapper userMapper;
+
+    public StpInterfaceImpl(UserMapper userMapper) {
+        this.userMapper = userMapper;
+    }
 
     @Override
     public List<String> getPermissionList(Object o, String s) {
