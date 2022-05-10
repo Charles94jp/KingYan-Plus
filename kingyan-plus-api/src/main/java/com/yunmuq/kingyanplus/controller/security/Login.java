@@ -60,6 +60,9 @@ public class Login {
     @GetMapping("/getLoginConfig")
     public LoginConfigResponse getLoginConfig() {
         LoginConfigResponse loginConfigResponse = new LoginConfigResponse(loginConfigEntity.getPublicKeyHex());
+        if (loginConfigEntity.isDynamicKeyPair()) {
+            loginConfigResponse.setTimeout(loginConfigEntity.getCreateTime() + loginConfigEntity.getTimeout());
+        }
         return loginConfigResponse;
     }
 
@@ -74,7 +77,7 @@ public class Login {
 
         ////// 1.校验验证码
         CheckCaptchaResult checkCaptchaResult = captchaService.checkCaptcha(requestParam.getCaptcha());
-        if (!checkCaptchaResult.isSuccess()){
+        if (!checkCaptchaResult.isSuccess()) {
             loginResponse.setMsg(checkCaptchaResult.getMsg());
             return loginResponse;
         }
@@ -147,7 +150,7 @@ public class Login {
 
     @GetMapping("heartbeat")
     @SaCheckLogin
-    public void heartbeat(){
+    public void heartbeat() {
 
     }
 }

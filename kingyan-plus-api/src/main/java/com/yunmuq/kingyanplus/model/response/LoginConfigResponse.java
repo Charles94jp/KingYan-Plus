@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LoginConfigResponse {
     private String publicKey;
+    private long timeout;
 
     public LoginConfigResponse(String publicKey) {
         this.publicKey = publicKey;

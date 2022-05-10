@@ -23,12 +23,16 @@ sa-token:
   cookie:
     httpOnly: true
 
-# 如何生成见单元测试com.yunmuq.kingyanplus.sm.SMCryptoTest
-sm2-key-pair:
-  private-key-hex:
-  public-key-hex:
-
-#kingyan:
+kingyan:
+  # 前后端加密传输的密钥对
+  sm2-key-pair:
+    dynamic-key-pair: true
+    # dynamic-key-pair为true时，多久更新一次密钥对。不要太小，最好大于10000(ms)
+    timeout: 86400000
+    # 如果dynamic-key-pair为false，则需要手动配置密钥
+    # 如何生成见单元测试com.yunmuq.kingyanplus.sm.SMCryptoTest
+#    private-key-hex:
+#    public-key-hex:
 #  captcha:
 #    captchaTimeout: 60000
 #    captchaLength: 5

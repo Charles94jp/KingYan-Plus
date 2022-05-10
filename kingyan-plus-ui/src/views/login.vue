@@ -49,7 +49,8 @@ import hexToArrayBuffer from 'hex-to-array-buffer'
 
 // todo: 图片验证码
 interface LoginConfig {
-  publicKey: ''
+  publicKey: string
+  timeout: number
 }
 
 const loginConfig = ref<LoginConfig>()
@@ -63,9 +64,14 @@ service({ method: 'get', url: '/auth/getLoginConfig' })
 const loginData = reactive({ captcha: '', userName: '', password: '', rememberMe: false })
 const encryptedLoginData = reactive({ captcha: '', userName: '', password: '', rememberMe: false })
 
-function login () {
+async function login () {
   if (loginConfig.value) {
-    // encryptedLoginData.userName = sm2.doEncrypt(loginData.userName, loginConfig.value.publicKey)
+    // 如果密公钥过期，必须用同步请求先更新公钥
+    if (Date.now() > loginConfig.value.timeout) {
+      await service.get('/auth/getLoginConfig').then(({ data }) => {
+        loginConfig.value = data
+      })
+    }
     encryptedLoginData.userName = loginData.userName
     encryptedLoginData.password = sm2.doEncrypt(loginData.password, loginConfig.value.publicKey)
     const byte = hexToArrayBuffer(encryptedLoginData.password)
