@@ -1,4 +1,5 @@
 import { ElMessage } from 'element-plus/es'
+import 'element-plus/es/components/message/style/css'
 import { BuildPropType } from 'element-plus/es/utils'
 
 export default {

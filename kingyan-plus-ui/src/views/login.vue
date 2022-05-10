@@ -16,11 +16,14 @@
           <h1>login</h1>
           <input v-model="loginData.userName" type="text" placeholder="用户名">
           <input v-model="loginData.password" type="password" placeholder="密码">
+          <el-row justify="center">
+            <el-col :span="9"><input v-model="loginData.captcha" type="text" style="width: 95%" placeholder="验证码"></el-col>
+            <el-col :span="9"><img style="width: 95%; transform: translateY(10%)" :src="captchaSrc+captchaSrcFlag" @click="()=>captchaSrcFlag++"></el-col>
+          </el-row>
           <button @click="login">登录</button>
         </div>
       </div>
-      <div class=" con-box left
-          ">
+      <div class="con-box left">
         <h2>欢迎注册<span>清焰</span></h2>
         <p>简洁<span>管理</span>平台</p>
         <img src="@/assets/images/1.png" alt="">
@@ -42,10 +45,10 @@
 import service from '@/axios'
 import { reactive, ref } from 'vue'
 import router from '@/router'
-import elMessage from '@/util/el-message'
 import { sm2 } from 'sm-crypto'
 import { Base64 } from 'js-base64'
 import hexToArrayBuffer from 'hex-to-array-buffer'
+import elMessage from '@/util/el-message'
 
 // todo: 图片验证码
 interface LoginConfig {
@@ -54,6 +57,8 @@ interface LoginConfig {
 }
 
 const loginConfig = ref<LoginConfig>()
+const captchaSrc = ref(import.meta.env.VITE_APP_BASE_URL + 'auth/getCaptchaImg?')
+const captchaSrcFlag = ref(1)
 
 service({ method: 'get', url: '/auth/getLoginConfig' })
   .then(({ data }) => {
@@ -63,6 +68,7 @@ service({ method: 'get', url: '/auth/getLoginConfig' })
 // todo: captcha and rememberMe
 const loginData = reactive({ captcha: '', userName: '', password: '', rememberMe: false })
 const encryptedLoginData = reactive({ captcha: '', userName: '', password: '', rememberMe: false })
+const user = ref()
 
 async function login () {
   if (loginConfig.value) {
@@ -79,6 +85,8 @@ async function login () {
     encryptedLoginData.password = '04' + sm2.doEncrypt(loginData.password, loginConfig.value.publicKey)
     byte = hexToArrayBuffer(encryptedLoginData.password)
     encryptedLoginData.password = Base64.fromUint8Array(new Uint8Array(byte))
+    //
+    encryptedLoginData.captcha = loginData.captcha
   }
   service({
     method: 'POST',
@@ -88,9 +96,12 @@ async function login () {
     .then(({ data }) => {
       if (data.success) {
         router.push('/')
+        user.value = data.user
+        console.log(user.value)
       } else {
         // todo: elMessage style error
         elMessage.elMessage(data.msg, 'warning')
+        captchaSrcFlag.value++
       }
     })
 }
@@ -116,6 +127,8 @@ function toLogin () {
   registerBox.hidden = true
   loginBox.hidden = false
 }
+
+defineExpose({ user })
 
 </script>
 

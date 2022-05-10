@@ -1,27 +1,29 @@
 <template>
-  <br> <br>
-  <h1>User: {{ userName }}</h1>
-  <h3>whit role: {{ userRole }}</h3>
-  <el-button type="warning" :icon="SwitchButton" @click="logout" round>Logout</el-button>
-  <br><br>
-  <div>
-    <el-link type="info" @click="fetchAllRoles()">all roles</el-link>
+  <div style="text-align: center;">
     <br> <br>
-    <el-link type="primary" @click="fetchAdmin()">admin</el-link>
-    <br> <br>
-    <el-link type="success" @click="fetchTest()">test</el-link>
+    <h1>User: {{ userName }}</h1>
+    <h3>whit role: {{ userRole }}</h3>
+    <el-button type="warning" :icon="SwitchButton" @click="logout" round>Logout</el-button>
+    <br><br>
+    <div>
+      <el-link type="info" @click="fetchAllRoles()">all roles</el-link>
+      <br> <br>
+      <el-link type="primary" @click="fetchAdmin()">admin</el-link>
+      <br> <br>
+      <el-link type="success" @click="fetchTest()">test</el-link>
+    </div>
+    <br> <br> <br>
+    <el-input
+      v-model="textarea"
+      disabled
+      :rows="3"
+      :clos="30"
+      type="textarea"
+      placeholder="请求结果"
+      :input-style="{width:'500px'}"
+    />
+    <br>
   </div>
-  <br> <br> <br>
-  <el-input
-    v-model="textarea"
-    disabled
-    :rows="3"
-    :clos="30"
-    type="textarea"
-    placeholder="请求结果"
-    :input-style="{width:'500px'}"
-  />
-  <br>
 </template>
 
 <script setup lang="ts">
@@ -49,8 +51,12 @@ interface User {
   createdDate: string
 }
 
-// const user = ref<User>()
+// todo: get user from login.vue
+const user = ref()
 const userName = ref('')
+if (user.value) {
+  userName.value = user.value.user.name
+}
 const userRole = ref('')
 
 service.get('/auth/heartbeat')
@@ -62,7 +68,7 @@ service.get('/auth/heartbeat')
 // }).catch(e => console.log(e))
 
 function logout () {
-  service.post('/auth/logout').then(r => {
+  service.get('/auth/logout').then(r => {
     if (r.data.success) {
       elMessage.elMessage('退出成功', 'success')
     }
