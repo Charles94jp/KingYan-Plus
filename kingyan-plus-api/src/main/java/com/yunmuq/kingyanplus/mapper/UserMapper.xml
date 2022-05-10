@@ -11,6 +11,11 @@
     <!--            flushInterval="1000"-->
     <!--            size="512"-->
     <!--            readOnly="true"/>-->
+    <select id="selectUserByUserNameWithoutAuth" resultType="com.yunmuq.kingyanplus.dto.User">
+        SELECT *
+        FROM kingyan_plus.user
+        WHERE name = #{userName}
+    </select>
 
     <select id="selectUserByUserName" resultMap="UserAuth">
         SELECT *

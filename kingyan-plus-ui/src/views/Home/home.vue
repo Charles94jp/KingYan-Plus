@@ -1,8 +1,9 @@
 <template>
   <div style="text-align: center;">
     <br> <br>
-    <h1>User: {{ userName }}</h1>
-    <h3>whit role: {{ userRole }}</h3>
+    <h1>User: {{ user ? user.name : '' }}</h1>
+    <h3>whit roles: {{ user ? user.roles : [] }}</h3>
+    <h3>and permissions: {{ user ? user.permissions : [] }}</h3>
     <el-button type="warning" :icon="SwitchButton" @click="logout" round>Logout</el-button>
     <br><br>
     <div>
@@ -37,13 +38,22 @@ const textarea = ref('')
 const text = reactive({ value: '' })
 text.value = '请求结果'
 
+interface Permission{
+  id: number
+  name: string
+}
+
+interface Role{
+  id: number
+  name: string
+  permissions: Array<Permission>
+}
+
 interface User {
   id: number
   name: string
-  role: {
-    id: number
-    name: string
-  }
+  roles: Array<Role>
+  permissions: Array<Permission>
   nickname: string
   sex: number
   phone: string
@@ -52,14 +62,13 @@ interface User {
 }
 
 // todo: get user from login.vue
-const user = ref()
-const userName = ref('')
-if (user.value) {
-  userName.value = user.value.user.name
-}
-const userRole = ref('')
+const user = ref<User>()
 
-service.get('/auth/heartbeat')
+service.get('/user/getUserInfo').then(r => {
+  if (r) {
+    user.value = r.data
+  }
+})
 
 // service.get('/auth/getUserInfo').then(r => {
 //   user.value = r.data as any

@@ -15,5 +15,7 @@ class UserMapperTest {
     void selectUserByUserName() {
         User admin = userMapper.selectUserByUserName("admin");
         System.out.println(admin);
+        admin = userMapper.selectUserByUserNameWithoutAuth("admin");
+        System.out.println(admin);
     }
 }

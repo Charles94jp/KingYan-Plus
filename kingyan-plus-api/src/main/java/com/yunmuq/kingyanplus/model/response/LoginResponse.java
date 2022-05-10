@@ -19,5 +19,4 @@ public class LoginResponse {
     private boolean success;
     private boolean captchaCheck;
     private String msg;
-    private User user;
 }

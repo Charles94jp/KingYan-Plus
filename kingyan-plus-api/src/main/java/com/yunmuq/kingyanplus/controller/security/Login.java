@@ -102,7 +102,7 @@ public class Login {
             loginResponse.setMsg(tips);
             return loginResponse;
         }
-        User user = userMapper.selectUserByUserName(userName);
+        User user = userMapper.selectUserByUserNameWithoutAuth(userName);
         if (user == null) {
             loginResponse.setMsg(tips);
             return loginResponse;
@@ -127,7 +127,7 @@ public class Login {
         // 先登出再登录，刷新会话
         StpUtil.logout();
         // id参数必须是用户名，后续使用这个查数据库获取用户角色
-        StpUtil.login(requestParam.getUserName(), new SaLoginModel()
+        StpUtil.login(userName, new SaLoginModel()
                 .setIsLastingCookie(requestParam.isRememberMe())   // 是否为持久Cookie（临时Cookie在浏览器关闭时会自动删除，持久Cookie在重新打开后依然存在）
         );
         String uuid = UUID.randomUUID().toString();
@@ -139,10 +139,6 @@ public class Login {
         // todo: 添加一个不存在的path，让浏览器不在Cookie header中带上，但是axios自动带上，节省网络开销
         csrfCookie.setPath("/");
         response.addCookie(csrfCookie);
-        // 密码不要给前端
-        // 如果mapper开启二级缓存会污染缓存
-        user.setPassword(null);
-        loginResponse.setUser(user);
         tips = messageSource.getMessage("login.success", null, locale);
         loginResponse.setMsg(tips);
         loginResponse.setSuccess(StpUtil.isLogin());
@@ -156,11 +152,5 @@ public class Login {
         Locale locale = LocaleContextHolder.getLocale();
         String tips = messageSource.getMessage("logout.success", null, locale);
         return new CommonResponse(!StpUtil.isLogin(), tips);
-    }
-
-    @GetMapping("heartbeat")
-    @SaCheckLogin
-    public void heartbeat() {
-
     }
 }
