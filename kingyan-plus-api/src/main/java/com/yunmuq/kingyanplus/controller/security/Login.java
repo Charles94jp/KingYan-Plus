@@ -59,6 +59,7 @@ public class Login {
         this.captchaService = captchaService;
     }
 
+    // todo: 提取出来
     @GetMapping("/getLoginConfig")
     public LoginConfigResponse getLoginConfig() {
         LoginConfigResponse loginConfigResponse = new LoginConfigResponse(loginConfigEntity.getPublicKeyHex());
