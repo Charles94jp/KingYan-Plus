@@ -4,7 +4,6 @@ import cn.dev33.satoken.session.SaSession;
 import cn.dev33.satoken.stp.StpUtil;
 import com.wf.captcha.base.Captcha;
 import com.yunmuq.kingyanplus.service.security.CaptchaService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,7 +33,7 @@ public class CaptchaController {
         // 设置请求头为输出图片类型
         response.setContentType("image/gif");
         response.setHeader("Pragma", "No-cache");
-        response.setHeader("Cache-Control", "no-cache");
+        response.setHeader("Cache-Control", "no-store,no-cache,must-revalidate,post-check=0,pre-check=0,max-age=0");
         response.setDateHeader("Expires", 0);
 
         Captcha captcha = captchaService.generateCaptcha();

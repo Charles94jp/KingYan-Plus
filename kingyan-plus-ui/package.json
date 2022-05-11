@@ -8,11 +8,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@element-plus/icons-vue": "^1.1.4",
     "axios": "^0.27.2",
     "element-plus": "^2.1.11",
     "hex-to-array-buffer": "^2.0.0",
     "js-base64": "^3.7.2",
     "sm-crypto": "^0.3.8",
+    "unplugin-icons": "^0.14.3",
     "vue": "^3.2.25",
     "vue-router": "^4.0.14"
   },

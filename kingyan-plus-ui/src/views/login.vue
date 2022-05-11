@@ -5,10 +5,30 @@
         <!-- 注册 -->
         <div class="register-box" :class="registerBox">
           <h1>register</h1>
-          <input type="text" placeholder="用户名">
-          <input type="email" placeholder="邮箱">
-          <input type="password" placeholder="密码">
-          <input type="password" placeholder="确认密码">
+          <el-row justify="center" style="width: 242px; transform: translateX(3.2%)">
+            <input style="width: 92.6%;" type="text" v-model="registerData.userName" placeholder="用户名">
+            <el-tooltip content="至少3位且只能使用数字字母" placement="top" effect="light">
+              <el-icon color="var(--el-color-success-dark-2)" style="transform: translateY(100%)"><question-filled/></el-icon>
+            </el-tooltip>
+          </el-row>
+          <!--          <el-row  justify="center">-->
+<!--            <el-col :span="9"><input style="width: 100%;" type="text" v-model="registerData.userName" placeholder="用户名"></el-col>-->
+<!--            <el-col :span="9"><el-icon color="var(&#45;&#45;el-color-success-dark-2)"><question-filled/></el-icon></el-col>-->
+<!--          </el-row>-->
+          <input type="email" v-model="encryptedRegisterData.email" placeholder="邮箱">
+          <input type="password" v-model="registerData.password" placeholder="密码">
+          <el-row justify="center" style="width: 242px; transform: translateX(3.2%)">
+            <input style="width: 92.6%;" @input="checkPassword" type="password" v-model="registerData.confirmPassword" placeholder="确认密码">
+            <el-icon v-if="!registerData.confirmPassword"></el-icon>
+            <el-icon v-if="registerData.confirmPassword&&confirmPassword" color="var(--el-color-success-dark-2)" style="transform: translateY(100%)"><circle-check-filled/></el-icon>
+            <el-tooltip content="两次输入的密码不一致" placement="top" effect="light" v-if="!confirmPassword">
+              <el-icon color="var(--el-color-error-dark-2)" style="transform: translateY(100%)"><circle-close-filled/></el-icon>
+            </el-tooltip>
+          </el-row>
+          <el-row justify="center">
+            <el-col :span="9"><input v-model="encryptedRegisterData.captcha" type="text" style="width: 95%; transform: translateX(3%)" placeholder="验证码"></el-col>
+            <el-col :span="9"><img style="width: 95%; transform: translate(2%,10%)" :src="captchaSrc+captchaSrcFlag" @click="()=>captchaSrcFlag++"></el-col>
+          </el-row>
           <button>注册</button>
         </div>
         <!-- 登录 -->
@@ -17,10 +37,11 @@
           <input v-model="loginData.userName" type="text" placeholder="用户名">
           <input v-model="loginData.password" type="password" placeholder="密码">
           <el-row justify="center">
-            <el-col :span="9"><input v-model="loginData.captcha" type="text" style="width: 95%" placeholder="验证码"></el-col>
-            <el-col :span="9"><img style="width: 95%; transform: translateY(10%)" :src="captchaSrc+captchaSrcFlag" @click="()=>captchaSrcFlag++"></el-col>
+            <el-col :span="9"><input v-model="encryptedLoginData.captcha" type="text" style="width: 95%; transform: translateX(3%)" placeholder="验证码"></el-col>
+            <el-col :span="9"><img style="width: 95%; transform: translate(2%,10%)" :src="captchaSrc+captchaSrcFlag" @click="()=>captchaSrcFlag++"></el-col>
           </el-row>
           <button @click="login">登录</button>
+          <el-checkbox v-model="encryptedLoginData.rememberMe" label="记住我" size="large" />
         </div>
       </div>
       <div class="con-box left">
@@ -49,6 +70,7 @@ import { sm2 } from 'sm-crypto'
 import { Base64 } from 'js-base64'
 import hexToArrayBuffer from 'hex-to-array-buffer'
 import elMessage from '@/util/el-message'
+import { CircleCheckFilled, CircleCloseFilled, QuestionFilled } from '@element-plus/icons-vue'
 
 // todo: 图片验证码
 interface LoginConfig {
@@ -65,10 +87,19 @@ service({ method: 'get', url: '/auth/getLoginConfig' })
     loginConfig.value = data
   })
 
-// todo: captcha and rememberMe
-const loginData = reactive({ captcha: '', userName: '', password: '', rememberMe: false })
+const loginData = reactive({ userName: '', password: '' })
 const encryptedLoginData = reactive({ captcha: '', userName: '', password: '', rememberMe: false })
-const user = ref()
+const registerData = reactive({ userName: '', password: '', confirmPassword: '' })
+const encryptedRegisterData = reactive({ captcha: '', userName: '', password: '', email: '' })
+const confirmPassword = ref(true)
+
+function checkPassword () {
+  if (registerData.password === registerData.confirmPassword) {
+    confirmPassword.value = true
+  } else {
+    confirmPassword.value = false
+  }
+}
 
 async function login () {
   if (loginConfig.value) {
@@ -85,8 +116,6 @@ async function login () {
     encryptedLoginData.password = '04' + sm2.doEncrypt(loginData.password, loginConfig.value.publicKey)
     byte = hexToArrayBuffer(encryptedLoginData.password)
     encryptedLoginData.password = Base64.fromUint8Array(new Uint8Array(byte))
-    //
-    encryptedLoginData.captcha = loginData.captcha
   }
   service({
     method: 'POST',
@@ -96,8 +125,6 @@ async function login () {
     .then(({ data }) => {
       if (data.success) {
         router.push('/')
-        user.value = data.user
-        console.log(user.value)
       } else {
         // todo: elMessage style error
         elMessage.elMessage(data.msg, 'warning')
@@ -120,15 +147,15 @@ function toRegister () {
   formBoxTransform.transform = 'translateX(80%)'
   loginBox.hidden = true
   registerBox.hidden = false
+  captchaSrcFlag.value++
 }
 
 function toLogin () {
   formBoxTransform.transform = 'translateX(0%)'
   registerBox.hidden = true
   loginBox.hidden = false
+  captchaSrcFlag.value++
 }
-
-defineExpose({ user })
 
 </script>
 
@@ -138,6 +165,30 @@ defineExpose({ user })
   margin: 0;
   padding: 0;
 }
+
+/*--勾选框start*/
+.login-box >>> .el-checkbox__label {
+  color: #a262ad;
+}
+
+.login-box >>> .is-checked .el-checkbox__label {
+  color: #de7ab1;
+}
+
+.login-box >>> .is-checked .el-checkbox__inner{
+  background-color: #de7ab1;
+  border-color: #e18dac
+}
+
+/*focus时外框的颜色*/
+.el-checkbox{
+  --el-checkbox-input-border-color-hover: #e18dac
+}
+
+.el-checkbox__input.is-checked+.el-checkbox__label {
+  color: var(--el-color-danger);
+}
+/*--勾选框end*/
 
 #login_container {
   /* 100%窗口高度 */
