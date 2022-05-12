@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since spring boot 2.6.7
  */
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/sec")
 public class CaptchaController {
 
     private final CaptchaService captchaService;

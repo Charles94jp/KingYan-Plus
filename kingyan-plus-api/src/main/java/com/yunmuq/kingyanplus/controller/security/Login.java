@@ -1,19 +1,17 @@
 package com.yunmuq.kingyanplus.controller.security;
 
 import cn.dev33.satoken.SaManager;
-import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.stp.SaLoginModel;
 import cn.dev33.satoken.stp.StpUtil;
-import com.yunmuq.kingyanplus.config.LoginConfigEntity;
 import com.yunmuq.kingyanplus.dto.User;
 import com.yunmuq.kingyanplus.mapper.UserMapper;
 import com.yunmuq.kingyanplus.model.CheckCaptchaResult;
 import com.yunmuq.kingyanplus.model.request.LoginRequest;
 import com.yunmuq.kingyanplus.model.response.CommonResponse;
-import com.yunmuq.kingyanplus.model.response.LoginConfigResponse;
 import com.yunmuq.kingyanplus.model.response.LoginResponse;
 import com.yunmuq.kingyanplus.service.security.CaptchaService;
 import com.yunmuq.kingyanplus.service.security.UserPassword;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -37,10 +35,8 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/auth")
+@RequiredArgsConstructor
 public class Login {
-
-    private final LoginConfigEntity loginConfigEntity;
-
     private final UserMapper userMapper;
 
     private final UserPassword userPassword;
@@ -50,23 +46,6 @@ public class Login {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final CaptchaService captchaService;
-
-    public Login(LoginConfigEntity loginConfigEntity, UserMapper userMapper, UserPassword userPassword, MessageSource messageSource, CaptchaService captchaService) {
-        this.loginConfigEntity = loginConfigEntity;
-        this.userMapper = userMapper;
-        this.userPassword = userPassword;
-        this.messageSource = messageSource;
-        this.captchaService = captchaService;
-    }
-
-    @GetMapping("/getLoginConfig")
-    public LoginConfigResponse getLoginConfig() {
-        LoginConfigResponse loginConfigResponse = new LoginConfigResponse(loginConfigEntity.getPublicKeyHex());
-        if (loginConfigEntity.isDynamicKeyPair()) {
-            loginConfigResponse.setTimeout(loginConfigEntity.getCreateTime() + loginConfigEntity.getTimeout());
-        }
-        return loginConfigResponse;
-    }
 
     /**
      * 未勾选记住我则session不会添加时间属性，浏览器默认在下次启动后清空cookie。<b>后端仍保存此cookie</b>

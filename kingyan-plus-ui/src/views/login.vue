@@ -79,10 +79,10 @@ interface LoginConfig {
 }
 
 const loginConfig = ref<LoginConfig>()
-const captchaSrc = ref(import.meta.env.VITE_APP_BASE_URL + 'auth/getCaptchaImg?')
+const captchaSrc = ref(import.meta.env.VITE_APP_BASE_URL + '/sec/getCaptchaImg?')
 const captchaSrcFlag = ref(1)
 
-service({ method: 'get', url: '/auth/getLoginConfig' })
+service({ method: 'get', url: '/sec/getPublicKey' })
   .then(({ data }) => {
     loginConfig.value = data
   })
@@ -105,7 +105,7 @@ async function login () {
   if (loginConfig.value) {
     // 如果密公钥过期，必须用同步请求先更新公钥
     if (Date.now() > loginConfig.value.timeout) {
-      await service.get('/auth/getLoginConfig').then(({ data }) => {
+      await service.get('/sec/getPublicKey').then(({ data }) => {
         loginConfig.value = data
       })
     }
