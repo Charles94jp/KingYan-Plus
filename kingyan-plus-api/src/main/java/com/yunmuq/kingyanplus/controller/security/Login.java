@@ -47,27 +47,6 @@ public class Login {
 
     private final CaptchaService captchaService;
 
-<<<<<<< HEAD
-=======
-    public Login(LoginConfigEntity loginConfigEntity, UserMapper userMapper, UserPassword userPassword, MessageSource messageSource, CaptchaService captchaService) {
-        this.loginConfigEntity = loginConfigEntity;
-        this.userMapper = userMapper;
-        this.userPassword = userPassword;
-        this.messageSource = messageSource;
-        this.captchaService = captchaService;
-    }
-
-    // todo: 提取出来
-    @GetMapping("/getLoginConfig")
-    public LoginConfigResponse getLoginConfig() {
-        LoginConfigResponse loginConfigResponse = new LoginConfigResponse(loginConfigEntity.getPublicKeyHex());
-        if (loginConfigEntity.isDynamicKeyPair()) {
-            loginConfigResponse.setTimeout(loginConfigEntity.getCreateTime() + loginConfigEntity.getTimeout());
-        }
-        return loginConfigResponse;
-    }
-
->>>>>>> daf8b8c2d08e794c8881167c7a2b944e20754981
     /**
      * 未勾选记住我则session不会添加时间属性，浏览器默认在下次启动后清空cookie。<b>后端仍保存此cookie</b>
      * 勾选后，Set-Cookie时添加过期时间，关闭浏览器不会丢失cookie
