@@ -6,15 +6,12 @@
         <div class="register-box" :class="registerBox">
           <h1>register</h1>
           <el-row justify="center" style="width: 242px; transform: translateX(3.2%)">
-            <input style="width: 92.6%;" type="text" v-model="registerData.userName" placeholder="用户名">
-            <el-tooltip content="至少3位且只能使用数字字母" placement="top" effect="light">
-              <el-icon color="var(--el-color-success-dark-2)" style="transform: translateY(100%)"><question-filled/></el-icon>
+            <input @input="checkUserNameLegality" style="width: 92.6%;" type="text" v-model="registerData.userName" placeholder="用户名">
+            <el-icon v-if="!registerData.userName||checkUserName"></el-icon>
+            <el-tooltip v-if="registerData.userName&&!checkUserName" content="至少3位且只能使用数字字母" placement="top" effect="light">
+              <el-icon color="var(--el-color-error-dark-2)" style="transform: translateY(100%)"><circle-close-filled/></el-icon>
             </el-tooltip>
           </el-row>
-          <!--          <el-row  justify="center">-->
-<!--            <el-col :span="9"><input style="width: 100%;" type="text" v-model="registerData.userName" placeholder="用户名"></el-col>-->
-<!--            <el-col :span="9"><el-icon color="var(&#45;&#45;el-color-success-dark-2)"><question-filled/></el-icon></el-col>-->
-<!--          </el-row>-->
           <input type="email" v-model="encryptedRegisterData.email" placeholder="邮箱">
           <input type="password" v-model="registerData.password" placeholder="密码">
           <el-row justify="center" style="width: 242px; transform: translateX(3.2%)">
@@ -29,7 +26,7 @@
             <el-col :span="9"><input v-model="encryptedRegisterData.captcha" type="text" style="width: 95%; transform: translateX(3%)" placeholder="验证码"></el-col>
             <el-col :span="9"><img style="width: 95%; transform: translate(2%,10%)" :src="captchaSrc+captchaSrcFlag" @click="()=>captchaSrcFlag++"></el-col>
           </el-row>
-          <button>注册</button>
+          <button @click="register">注册</button>
         </div>
         <!-- 登录 -->
         <div class="login-box" :class="loginBox">
@@ -70,7 +67,7 @@ import { sm2 } from 'sm-crypto'
 import { Base64 } from 'js-base64'
 import hexToArrayBuffer from 'hex-to-array-buffer'
 import elMessage from '@/util/el-message'
-import { CircleCheckFilled, CircleCloseFilled, QuestionFilled } from '@element-plus/icons-vue'
+import { CircleCheckFilled, CircleCloseFilled } from '@element-plus/icons-vue'
 
 // todo: 图片验证码
 interface LoginConfig {
@@ -91,7 +88,12 @@ const loginData = reactive({ userName: '', password: '' })
 const encryptedLoginData = reactive({ captcha: '', userName: '', password: '', rememberMe: false })
 const registerData = reactive({ userName: '', password: '', confirmPassword: '' })
 const encryptedRegisterData = reactive({ captcha: '', userName: '', password: '', email: '' })
+const checkUserName = ref(false)
 const confirmPassword = ref(true)
+
+function checkUserNameLegality () {
+  checkUserName.value = /^[a-zA-Z0-9]{3,}$/.test(registerData.userName)
+}
 
 function checkPassword () {
   if (registerData.password === registerData.confirmPassword) {
@@ -101,6 +103,7 @@ function checkPassword () {
   }
 }
 
+<<<<<<< HEAD
 async function login () {
   if (loginConfig.value) {
     // 如果密公钥过期，必须用同步请求先更新公钥
@@ -116,7 +119,34 @@ async function login () {
     encryptedLoginData.password = '04' + sm2.doEncrypt(loginData.password, loginConfig.value.publicKey)
     byte = hexToArrayBuffer(encryptedLoginData.password)
     encryptedLoginData.password = Base64.fromUint8Array(new Uint8Array(byte))
+=======
+async function realEncrypt (plaintext:string) {
+  if (!loginConfig.value) {
+    return
+>>>>>>> daf8b8c2d08e794c8881167c7a2b944e20754981
   }
+  // 如果密公钥过期，必须用同步请求先更新公钥
+  console.log(Date.now())
+  console.log(loginConfig.value.timeout)
+  if (Date.now() > loginConfig.value.timeout) {
+    await service.get('/auth/getLoginConfig').then(({ data }) => {
+      loginConfig.value = data
+    })
+  }
+  // 因为sm-crypto库的加密结果不符合规范，手动添加上第一个字节 0x04。拷贝数组性能更高，但是ArrayBuffer难写...
+  const hexStr = '04' + sm2.doEncrypt(plaintext, loginConfig.value.publicKey)
+  const byte = hexToArrayBuffer(hexStr)
+  return Base64.fromUint8Array(new Uint8Array(byte))
+}
+
+async function login () {
+  const _userName = await realEncrypt(loginData.userName)
+  if (!_userName) return
+  encryptedLoginData.userName = _userName
+  const _password = await realEncrypt(loginData.password)
+  if (!_password) return
+  encryptedLoginData.password = _password
+
   service({
     method: 'POST',
     url: '/auth/login',
@@ -131,6 +161,18 @@ async function login () {
         captchaSrcFlag.value++
       }
     })
+}
+
+async function register () {
+  if (!confirmPassword.value || !checkUserName.value || !encryptedRegisterData.email) {
+    elMessage.elMessage('输入的数据有误', 'warning')
+  }
+  const _userName = await realEncrypt(registerData.userName)
+  if (!_userName) return
+  encryptedRegisterData.userName = _userName
+  const _password = await realEncrypt(registerData.password)
+  if (!_password) return
+  encryptedRegisterData.password = _password
 }
 
 // const loginConfig = service.get('/getLoginConfig')
