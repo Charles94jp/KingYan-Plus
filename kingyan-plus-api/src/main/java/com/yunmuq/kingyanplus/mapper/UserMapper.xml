@@ -61,4 +61,8 @@
                     select="selectRolesByUserId" javaType="arraylist">
         </collection>
     </resultMap>
+
+    <insert id="insertUser">
+        INSERT INTO kingyan_plus.user(name, password, email) VALUE (#{name}, #{password}, #{email})
+    </insert>
 </mapper>

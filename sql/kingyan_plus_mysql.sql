@@ -7,7 +7,7 @@ DROP TABLE IF EXISTS `user`;
 # 角色和权限去关系表查
 CREATE TABLE IF NOT EXISTS `user`
 (
-    `id`           bigint(20)   NOT NULL    COMMENT '用户ID',
+    `id`           bigint(20)   NOT NULL    COMMENT '用户ID'  AUTO_INCREMENT,
     `name`         varchar(30)  NOT NULL    COMMENT '用户登录名，唯一',
     `password`     varchar(100) NOT NULL    COMMENT '登录密码，密文',
     `nickname`     varchar(30)              COMMENT '用户昵称',
@@ -33,7 +33,7 @@ DROP TABLE IF EXISTS `role`;
 
 CREATE TABLE IF NOT EXISTS `role`
 (
-    `id`   int(20)     NOT NULL COMMENT '角色ID',
+    `id`   int(20)     NOT NULL AUTO_INCREMENT COMMENT '角色ID',
     `name` varchar(30) NOT NULL COMMENT '角色名',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
@@ -48,7 +48,7 @@ DROP TABLE IF EXISTS `user_role`;
 # 用户，角色多对多，关系表
 CREATE TABLE IF NOT EXISTS `user_role`
 (
-    `id`      bigint(20) NOT NULL COMMENT '对应关系的id',
+    `id`      bigint(20) NOT NULL AUTO_INCREMENT COMMENT '对应关系的id',
     `user_id` bigint(20) NOT NULL,
     `role_id` bigint(20) NOT NULL,
     PRIMARY KEY (`id`)
@@ -64,7 +64,7 @@ DROP TABLE IF EXISTS `permission`;
 
 CREATE TABLE IF NOT EXISTS `permission`
 (
-    `id`   int(20)     NOT NULL COMMENT '权限id',
+    `id`   int(20)     NOT NULL COMMENT '权限id' AUTO_INCREMENT,
     `name` varchar(30) NOT NULL COMMENT '权限名',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
@@ -79,7 +79,7 @@ DROP TABLE IF EXISTS `user_permission`;
 # 用户，权限多对多，关系表
 CREATE TABLE IF NOT EXISTS `user_permission`
 (
-    `id`      bigint(20) NOT NULL COMMENT '对应关系的id',
+    `id`      bigint(20) NOT NULL AUTO_INCREMENT COMMENT '对应关系的id',
     `user_id` bigint(20) NOT NULL,
     `permission_id` bigint(20) NOT NULL,
     PRIMARY KEY (`id`)
@@ -94,7 +94,7 @@ DROP TABLE IF EXISTS `role_permission`;
 # 角色，权限多对多，关系表
 CREATE TABLE IF NOT EXISTS `role_permission`
 (
-    `id`      bigint(20) NOT NULL COMMENT '对应关系的id',
+    `id`      bigint(20) NOT NULL AUTO_INCREMENT COMMENT '对应关系的id',
     `role_id` bigint(20) NOT NULL,
     `permission_id` bigint(20) NOT NULL,
     PRIMARY KEY (`id`)

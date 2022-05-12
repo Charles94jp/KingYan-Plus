@@ -111,7 +111,7 @@ async function realEncrypt (plaintext:string) {
   console.log(Date.now())
   console.log(loginConfig.value.timeout)
   if (Date.now() > loginConfig.value.timeout) {
-    await service.get('/auth/getLoginConfig').then(({ data }) => {
+    await service.get('/sec/getPublicKey').then(({ data }) => {
       loginConfig.value = data
     })
   }
@@ -155,12 +155,17 @@ async function register () {
   const _password = await realEncrypt(registerData.password)
   if (!_password) return
   encryptedRegisterData.password = _password
+
+  service.post('/auth/register', encryptedRegisterData).then(({ data }) => {
+    if (data.success) {
+      elMessage.elMessage(data.msg, 'success')
+    } else {
+      // todo: elMessage style error
+      elMessage.elMessage(data.msg, 'warning')
+      captchaSrcFlag.value++
+    }
+  })
 }
-
-// const loginConfig = service.get('/getLoginConfig')
-
-// 异步，这里不一定获取到了loginConfig
-// console.log(loginConfig)
 
 // 滑动样式
 const formBoxTransform = reactive({ transform: '' })

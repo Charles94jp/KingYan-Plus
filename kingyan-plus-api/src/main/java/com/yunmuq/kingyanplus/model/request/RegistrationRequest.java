@@ -12,7 +12,7 @@ import lombok.Data;
 @Data
 public class RegistrationRequest {
     public String captcha;
-    public String verificatioCode;
+    public String email;
     public String userName;
     public String password;
 }

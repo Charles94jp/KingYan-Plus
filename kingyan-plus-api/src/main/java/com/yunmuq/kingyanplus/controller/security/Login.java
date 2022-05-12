@@ -66,7 +66,7 @@ public class Login {
         loginResponse.setCaptchaCheck(true);
 
         ////// 2.查用户
-        String tips = messageSource.getMessage("login.fail", null, locale);
+        String tips = messageSource.getMessage("login.failed", null, locale);
         String userName = requestParam.getUserName();
         String userPwd = requestParam.getPassword();
         if (userName == null || userName.equals("") || userPwd == null || userPwd.equals("")) {

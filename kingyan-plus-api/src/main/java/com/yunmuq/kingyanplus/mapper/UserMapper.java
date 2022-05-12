@@ -7,4 +7,5 @@ import org.apache.ibatis.annotations.Mapper;
 public interface UserMapper {
     User selectUserByUserName(String userName);
     User selectUserByUserNameWithoutAuth(String userName);
+    int insertUser(User user);
 }
