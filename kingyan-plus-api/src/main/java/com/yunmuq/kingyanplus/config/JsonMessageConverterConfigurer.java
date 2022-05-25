@@ -1,6 +1,6 @@
 package com.yunmuq.kingyanplus.config;
 
-import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+import com.alibaba.fastjson2.support.spring.http.converter.FastJsonHttpMessageConverter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -28,7 +28,7 @@ public class JsonMessageConverterConfigurer implements WebMvcConfigurer {
         // config.set...
         // converter.setFastJsonConfig(config);
 
-        // 高版本无需配置，低版本不配置报错：Content-Type cannot contain wildcard type '*'
+        // spring boot高版本无需配置，低版本不配置报错：Content-Type cannot contain wildcard type '*'
         List<MediaType> fastMediaTypes = new ArrayList<>();
         fastMediaTypes.add(MediaType.APPLICATION_JSON);
         fastMediaTypes.add(MediaType.APPLICATION_JSON_UTF8);
