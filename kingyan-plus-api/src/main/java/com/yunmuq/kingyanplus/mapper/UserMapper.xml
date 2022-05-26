@@ -65,4 +65,17 @@
     <insert id="insertUser">
         INSERT INTO kingyan_plus.user(name, password, email) VALUE (#{name}, #{password}, #{email})
     </insert>
+
+    <insert id="addUserPermission">
+        INSERT INTO user_permission(user_id, permission_id)
+                VALUE ((SELECT id FROM user WHERE name = #{userName}),
+                       (SELECT id FROM permission WHERE name = #{permissionName}))
+    </insert>
+
+    <delete id="deleteUserPermission">
+        DELETE
+        FROM user_permission
+        WHERE user_id = (SELECT id FROM user WHERE name = #{userName})
+          AND permission_id = (SELECT id FROM permission WHERE name = #{permissionName})
+    </delete>
 </mapper>

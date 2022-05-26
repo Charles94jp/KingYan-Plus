@@ -16,5 +16,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CommonResponse {
     private boolean success;
-    private String Message;
+    private String message;
 }

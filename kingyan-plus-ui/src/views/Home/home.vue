@@ -7,11 +7,13 @@
     <el-button type="warning" :icon="SwitchButton" @click="logout" round>Logout</el-button>
     <br><br>
     <div>
-      <el-link type="info" @click="fetchAllRoles()">all roles</el-link>
+      <el-link type="success" @click="applyTestRole()">申请test权限</el-link> &nbsp; &nbsp; <el-link type="warning" @click="waiverTestRole()">放弃test权限</el-link>
       <br> <br>
-      <el-link type="primary" @click="fetchAdmin()">admin</el-link>
+      <el-link type="info" @click="fetchAllRoles()">Hello to all</el-link>
       <br> <br>
-      <el-link type="success" @click="fetchTest()">test</el-link>
+      <el-link type="success" @click="fetchTest()">Hello to test</el-link>
+      <br> <br>
+      <el-link type="primary" @click="fetchAdmin()">Hello to admin</el-link>
     </div>
     <br> <br> <br>
     <el-input
@@ -86,20 +88,37 @@ function logout () {
 }
 
 function fetchAllRoles () {
-  service.get('/all/helloAllRoles').then(r => {
-    textarea.value = r.data.msg
+  service.get('/all/hello').then(r => {
+    textarea.value = r.data.message
   })
 }
 
 function fetchTest () {
   service.get('/test/hello').then(r => {
-    textarea.value = r.data.msg
+    textarea.value = r.data.message
   })
 }
 
 function fetchAdmin () {
   service.get('/admin/hello').then(r => {
-    textarea.value = r.data.msg
+    textarea.value = r.data.message
   })
 }
+
+function applyTestRole () {
+  service.post('/addTestRole').then(r => {
+    if (r.data.success) {
+      elMessage.elMessage('已获得test权限，请重新登录', 'success')
+    }
+  })
+}
+
+function waiverTestRole () {
+  service.post('/deleteTestRole').then(r => {
+    if (r.data.success) {
+      elMessage.elMessage('成功放弃test权限，请重新登录', 'success')
+    }
+  })
+}
+
 </script>
