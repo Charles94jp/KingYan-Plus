@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS `user`
     `email`        varchar(50)              COMMENT '用户邮箱地址',
     `created_date` date                     COMMENT '创建时间',
     PRIMARY KEY (`id`),
-    UNIQUE (name)
+    UNIQUE (`name`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
@@ -35,7 +35,8 @@ CREATE TABLE IF NOT EXISTS `role`
 (
     `id`   int(20)     NOT NULL AUTO_INCREMENT COMMENT '角色ID',
     `name` varchar(30) NOT NULL COMMENT '角色名',
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    UNIQUE (`name`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
@@ -57,8 +58,7 @@ CREATE TABLE IF NOT EXISTS `user_role`
 
 INSERT INTO `user_role` (id, user_id, role_id)
 VALUES (1, 1, 1),
-       (2, 2, 2),
-       (3, 3, 2);
+       (2, 2, 2);
 
 DROP TABLE IF EXISTS `permission`;
 
@@ -66,41 +66,43 @@ CREATE TABLE IF NOT EXISTS `permission`
 (
     `id`   int(20)     NOT NULL COMMENT '权限id' AUTO_INCREMENT,
     `name` varchar(30) NOT NULL COMMENT '权限名',
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    UNIQUE (`name`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
 INSERT INTO `permission` (id, name)
-VALUES (1, 'hello-read'),
-       (2, 'hello-all');
+VALUES (1, 'hello-admin'),
+       (2, 'hello-test');
 
 DROP TABLE IF EXISTS `user_permission`;
 
 # 用户，权限多对多，关系表
 CREATE TABLE IF NOT EXISTS `user_permission`
 (
-    `id`      bigint(20) NOT NULL AUTO_INCREMENT COMMENT '对应关系的id',
-    `user_id` bigint(20) NOT NULL,
+    `id`            bigint(20) NOT NULL AUTO_INCREMENT COMMENT '对应关系的id',
+    `user_id`       bigint(20) NOT NULL,
     `permission_id` bigint(20) NOT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
 INSERT INTO `user_permission` (id, user_id, permission_id)
-VALUES (1, 1, 2);
+VALUES (1, 1, 1),
+       (2, 2, 2);
 
 DROP TABLE IF EXISTS `role_permission`;
 
 # 角色，权限多对多，关系表
 CREATE TABLE IF NOT EXISTS `role_permission`
 (
-    `id`      bigint(20) NOT NULL AUTO_INCREMENT COMMENT '对应关系的id',
-    `role_id` bigint(20) NOT NULL,
+    `id`            bigint(20) NOT NULL AUTO_INCREMENT COMMENT '对应关系的id',
+    `role_id`       bigint(20) NOT NULL,
     `permission_id` bigint(20) NOT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
 INSERT INTO `role_permission` (id, role_id, permission_id)
-VALUES (1, 1, 2),
-       (2, 2, 1);
+VALUES (1, 1, 1),
+       (2, 2, 2);
