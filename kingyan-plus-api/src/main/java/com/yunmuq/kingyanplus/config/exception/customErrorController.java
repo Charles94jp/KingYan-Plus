@@ -55,7 +55,7 @@ public class customErrorController implements ErrorController {
                 return new CommonErrorResponse(200, "error");
             }
             // 如果是浏览器地址栏GET访问 404返回页面而不是json
-            if (request.getMethod().equals("GET") && httpStatus == 404) {
+            if (httpStatus == 404 && request.getHeader("Accept").indexOf("application/json") < 0 && request.getMethod().equals("GET")) {
                 response.setHeader("Content-Type", "text/html");
                 msg = locale.equals(Locale.US) ? error404HtmlENUS : error404Html;
                 response.getOutputStream().write(msg.getBytes());
