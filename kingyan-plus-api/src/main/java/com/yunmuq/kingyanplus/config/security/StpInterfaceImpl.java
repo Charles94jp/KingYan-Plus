@@ -1,6 +1,7 @@
 package com.yunmuq.kingyanplus.config.security;
 
 import cn.dev33.satoken.stp.StpInterface;
+import cn.dev33.satoken.stp.StpUtil;
 import com.yunmuq.kingyanplus.dto.Permission;
 import com.yunmuq.kingyanplus.dto.Role;
 import com.yunmuq.kingyanplus.dto.User;
@@ -29,18 +30,8 @@ public class StpInterfaceImpl implements StpInterface {
 
     @Override
     public List<String> getPermissionList(Object o, String s) {
-        User user = userMapper.selectUserByUserName((String) o);
-        ArrayList<String> permissionList = new ArrayList<>();
-        // 各roles中的权限有重复的。user自身的也有重复的，不去重也不会有问题
-        for (Role r : user.getRoles()) {
-            for (Permission p : r.getPermissions()) {
-                permissionList.add(p.getName());
-            }
-        }
-        for (Permission p : user.getPermissions()) {
-            permissionList.add(p.getName());
-        }
-        return permissionList;
+        // 每个需要认证的请求都会调用此方法，因此不能在此去查数据库
+        return (List<String>) StpUtil.getSession().get("permissions");
     }
 
     /**

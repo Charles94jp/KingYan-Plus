@@ -3,6 +3,8 @@ package com.yunmuq.kingyanplus.controller.security;
 import cn.dev33.satoken.SaManager;
 import cn.dev33.satoken.stp.SaLoginModel;
 import cn.dev33.satoken.stp.StpUtil;
+import com.yunmuq.kingyanplus.dto.Permission;
+import com.yunmuq.kingyanplus.dto.Role;
 import com.yunmuq.kingyanplus.dto.User;
 import com.yunmuq.kingyanplus.mapper.UserMapper;
 import com.yunmuq.kingyanplus.model.CheckCaptchaResult;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -74,7 +77,7 @@ public class Login {
             return loginResponse;
         }
         try {
-            userName=new String(userPassword.decryptSM2(userName));
+            userName = new String(userPassword.decryptSM2(userName));
         } catch (Exception e) {
             tips = messageSource.getMessage("login.invalid-pwd", null, locale);
             logger.info("login输入非法用户名，服务器可能遭受攻击", e);
@@ -109,6 +112,22 @@ public class Login {
         StpUtil.login(userName, new SaLoginModel()
                 .setIsLastingCookie(requestParam.isRememberMe())   // 是否为持久Cookie（临时Cookie在浏览器关闭时会自动删除，持久Cookie在重新打开后依然存在）
         );
+
+        ////// 5.载入权限信息
+        user = userMapper.selectUserByUserName(userName);
+        ArrayList<String> permissionList = new ArrayList<>();
+        // 各roles中的权限有重复的。user自身的也有重复的，不去重也不会有问题
+        for (Role r : user.getRoles()) {
+            for (Permission p : r.getPermissions()) {
+                permissionList.add(p.getName());
+            }
+        }
+        for (Permission p : user.getPermissions()) {
+            permissionList.add(p.getName());
+        }
+        StpUtil.getSession().set("permissions", permissionList);
+
+        ////// 6.颁发csrf-token，返回
         String uuid = UUID.randomUUID().toString();
         StpUtil.getTokenSession().set("csrfToken", uuid);
         // 使用X-XSRF-TOKEN，校验头，前端axios会自动添加到header中
