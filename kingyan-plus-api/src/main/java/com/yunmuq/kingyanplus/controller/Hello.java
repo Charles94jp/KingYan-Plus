@@ -53,6 +53,9 @@ public class Hello {
         if (!permissions.contains("hello-test")) {
             String userName = (String) StpUtil.getLoginId();
             success = userMapper.addUserPermission(userName, "hello-test") > 0;
+            if(success){
+                permissions.add("hello-test");
+            }
         }
         return new CommonResponse(success, "");
     }
@@ -62,6 +65,10 @@ public class Hello {
     public CommonResponse deleteTestRole() {
         String userName = (String) StpUtil.getLoginId();
         boolean success = userMapper.deleteUserPermission(userName, "hello-test") > 0;
+        if (success){
+            List<String> permissions = (List<String>) StpUtil.getSession().get("permissions");
+            permissions.remove("hello-test");
+        }
         return new CommonResponse(success, "");
     }
 }

@@ -7,7 +7,8 @@
     <el-button type="warning" :icon="SwitchButton" @click="logout" round>Logout</el-button>
     <br><br>
     <div>
-      <el-link type="success" @click="applyTestRole()">申请test权限</el-link> &nbsp; &nbsp; <el-link type="warning" @click="waiverTestRole()">放弃test权限</el-link>
+      <el-link type="success" @click="applyTestRole()">申请test权限</el-link> &nbsp; &nbsp;
+      <el-link type="warning" @click="waiverTestRole()">放弃test权限</el-link>
       <br> <br>
       <el-link type="info" @click="fetchAllRoles()">Hello to all</el-link>
       <br> <br>
@@ -17,13 +18,13 @@
     </div>
     <br> <br> <br>
     <el-input
-      v-model="textarea"
-      disabled
-      :rows="3"
-      :clos="30"
-      type="textarea"
-      placeholder="请求结果"
-      :input-style="{width:'500px'}"
+        v-model="textarea"
+        disabled
+        :rows="3"
+        :clos="30"
+        type="textarea"
+        placeholder="请求结果"
+        :input-style="{width:'500px'}"
     />
     <br>
   </div>
@@ -40,12 +41,12 @@ const textarea = ref('')
 const text = reactive({ value: '' })
 text.value = '请求结果'
 
-interface Permission{
+interface Permission {
   id: number
   name: string
 }
 
-interface Role{
+interface Role {
   id: number
   name: string
   permissions: Array<Permission>
@@ -66,12 +67,15 @@ interface User {
 // todo: get user from login.vue
 const user = ref<User>()
 
-service.get('/user/getUserInfo').then(r => {
-  if (r) {
-    user.value = r.data
-  }
-})
+function getUserInfo () {
+  service.get('/user/getUserInfo').then(r => {
+    if (r) {
+      user.value = r.data
+    }
+  })
+}
 
+getUserInfo()
 // service.get('/auth/getUserInfo').then(r => {
 //   user.value = r.data as any
 //   userName.value = user.value?.name as string
@@ -108,7 +112,10 @@ function fetchAdmin () {
 function applyTestRole () {
   service.post('/addTestRole').then(r => {
     if (r.data.success) {
-      elMessage.elMessage('已获得test权限，请重新登录', 'success')
+      elMessage.elMessage('已获得test权限', 'success')
+      getUserInfo()
+    } else {
+      elMessage.elMessage('执行失败', 'error')
     }
   })
 }
@@ -116,7 +123,10 @@ function applyTestRole () {
 function waiverTestRole () {
   service.post('/deleteTestRole').then(r => {
     if (r.data.success) {
-      elMessage.elMessage('成功放弃test权限，请重新登录', 'success')
+      elMessage.elMessage('成功放弃test权限', 'success')
+      getUserInfo()
+    } else {
+      elMessage.elMessage('执行失败', 'error')
     }
   })
 }
