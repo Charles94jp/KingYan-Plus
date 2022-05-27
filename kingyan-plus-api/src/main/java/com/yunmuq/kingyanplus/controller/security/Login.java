@@ -131,7 +131,7 @@ public class Login {
         String uuid = UUID.randomUUID().toString();
         StpUtil.getTokenSession().set("csrfToken", uuid);
         // 使用X-XSRF-TOKEN，校验头，前端axios会自动添加到header中
-        Cookie csrfCookie = new Cookie("X-XSRF-TOKEN", uuid);
+        Cookie csrfCookie = new Cookie("XSRF-TOKEN", uuid);
         // long转int
         csrfCookie.setMaxAge((int) SaManager.getConfig().getTimeout());
         // todo: 添加一个不存在的path，让浏览器不在Cookie header中带上，但是axios自动带上，节省网络开销

@@ -14,7 +14,7 @@ spring boot2.6.7 + sa-token + vue3 + ts + mybatis + log4j2 + fastjson2 + 国密�
 5. 去掉chrome浏览器的跨域保护，以及SameSite防护，方便本地调试:
 
 ```
-"C:\Program Files\Google\Chrome\Application\chrome.exe" --disable-site-isolation-trials --disable-web-security --disable-features=SameSiteByDefaultCookies --user-data-dir="D:\chrome-temp"
+"C:\Program Files\Google\Chrome\Application\chrome.exe" --disable-site-isolation-trials --disable-web-security --disable-features=SameSiteByDefaultCookies,CookiesWithoutSameSiteMustBeSecure --user-data-dir="D:\chrome-temp"
 ```
 
 这样启动chrome后，当一个独立的浏览器用，能解决本地调试时，前后端端口不一导致的跨域访问问题

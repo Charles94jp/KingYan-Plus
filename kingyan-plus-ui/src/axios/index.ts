@@ -5,7 +5,8 @@ import router from '@/router'
 const service = axios.create({
   baseURL: import.meta.env.VITE_APP_BASE_API_URL,
   timeout: 3000,
-  headers: { 'X-Custom-Header': 'foobar' }
+  // 开发时跨域带上csrf token
+  withCredentials: import.meta.env.DEV
 })
 
 // 添加请求拦截器
