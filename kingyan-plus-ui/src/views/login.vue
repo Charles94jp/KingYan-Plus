@@ -76,7 +76,7 @@ interface LoginConfig {
 }
 
 const loginConfig = ref<LoginConfig>()
-const captchaSrc = ref(import.meta.env.VITE_APP_BASE_URL + '/sec/getCaptchaImg?')
+const captchaSrc = ref(import.meta.env.VITE_APP_BASE_API_URL + '/sec/getCaptchaImg?')
 const captchaSrcFlag = ref(1)
 
 service({ method: 'get', url: '/sec/getPublicKey' })

@@ -3,7 +3,7 @@ import elMessage from '@/util/el-message'
 import router from '@/router'
 
 const service = axios.create({
-  baseURL: import.meta.env.VITE_APP_BASE_URL,
+  baseURL: import.meta.env.VITE_APP_BASE_API_URL,
   timeout: 3000,
   headers: { 'X-Custom-Header': 'foobar' }
 })
