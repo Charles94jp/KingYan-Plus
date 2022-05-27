@@ -64,7 +64,7 @@ location ^~ /kingyan-plus-api/ {
 
 ### 部署前端
 
-1. `npm run build`构建
+1. `npm run build`构建，如果部署时不是根路径访问，而存在子路径（前缀）的话，配置`.env.production`后再构建
 2. 将dist目录中的所有文件打包，上传到服务器再解压到nginx目录中
 
 ```shell
